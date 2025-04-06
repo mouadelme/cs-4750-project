@@ -1,0 +1,25 @@
+<div class="auth-container">
+  <h2>{{ isLoginMode ? 'Login' : 'Register' }}</h2>
+
+  <form (ngSubmit)="onSubmit()" class="auth-form">
+    <!-- Login fields -->
+    <div *ngIf="isLoginMode">
+      <input type="text" [(ngModel)]="loginUsername" name="loginUsername" placeholder="Username" />
+      <input type="password" [(ngModel)]="loginPassword" name="loginPassword" placeholder="Password" />
+    </div>
+
+    <!-- Register fields -->
+    <div *ngIf="!isLoginMode">
+      <input type="text" [(ngModel)]="registerUsername" name="registerUsername" placeholder="Username" />
+      <input type="password" [(ngModel)]="registerPassword" name="registerPassword" placeholder="Password" />
+      <input type="password" [(ngModel)]="registerConfirmPassword" name="registerConfirmPassword" placeholder="Confirm Password" />
+    </div>
+
+    <button type="submit">{{ isLoginMode ? 'Login' : 'Sign Up' }}</button>
+  </form>
+
+  <p class="toggle-text">
+    {{ isLoginMode ? "Don't have an account?" : 'Already have an account?' }}
+    <a (click)="toggleMode()">{{ isLoginMode ? 'Register' : 'Login' }}</a>
+  </p>
+</div>
