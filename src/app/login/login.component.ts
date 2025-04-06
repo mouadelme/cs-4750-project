@@ -44,7 +44,15 @@ export class LoginComponent {
         console.log('Login successful');
         this.router.navigate(['/dashboard']);
       },
-      error: err => console.error('Login failed', err)
+      error: err => {
+        if (err.status === 401) {
+          // Assuming a 401 error for incorrect credentials
+          alert("Incorrect password. Please try again.");
+        } else {
+          alert("Login failed. Please check your credentials and try again.");
+        }
+        console.error('Login failed', err);
+      }
     });
   }
 
@@ -65,7 +73,14 @@ export class LoginComponent {
         this.isLoginMode = true;
         this.login();
       },
-      error: err => console.error('Registration failed', err)
+      error: err => {
+        if (err.status === 409) {
+          alert("Username already exists. Please log in instead.");
+        } else {
+          alert("Registration failed. Please try again later.");
+        }
+        console.error('Registration failed', err);
+      }
     });
   }
 }
