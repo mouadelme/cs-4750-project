@@ -4,6 +4,7 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './src/main.server';
+import { Pool } from 'pg';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -18,7 +19,16 @@ export function app(): express.Express {
   server.set('views', browserDistFolder);
 
   // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
+  server.get('/api/test-db', async (req, res) => {
+    try {
+      const result = await pool.query('SELECT NOW()');
+      res.json({ success: true, time: result.rows[0].now });
+    } catch (error) {
+      console.error('Database connection error:', error);
+    }
+  });
+  
+
   // Serve static files from /browser
   server.get('**', express.static(browserDistFolder, {
     maxAge: '1y',
@@ -43,6 +53,14 @@ export function app(): express.Express {
 
   return server;
 }
+
+const pool = new Pool({
+  user: 'group16',
+  host: 'bastion.cs.virginia.edu',
+  database: 'group16',
+  password: 'D7nrA8X6',
+  port: 5432,
+});
 
 function run(): void {
   const port = process.env['PORT'] || 4000;
