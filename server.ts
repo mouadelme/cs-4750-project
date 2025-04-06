@@ -20,64 +20,12 @@ const pool = new Pool({
   port: 5432,
 });
 
-// Configure Passport Local Strategy
-passport.use(new LocalStrategy(
-  async (username: string, password: string, done: (error: any, user?: any, info?: any) => void) => {
-    try {
-      const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-      if (result.rows.length === 0) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      const user = result.rows[0];
-      // NOTE: In production, use hashed passwords. For demonstration, plain-text is used.
-      if (user.password !== password) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user, undefined);
-    } catch (err) {
-      return done(err, false, undefined);
-    }
-  }
-));
-
-
-// Serialize user ID to store in the session
-passport.serializeUser((user: any, done) => {
-  done(null, user.user_id);
-});
-
-// Deserialize user from session by user ID
-passport.deserializeUser(async (id: number, done) => {
-  try {
-    const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [id]);
-    if (result.rows.length > 0) {
-      done(null, result.rows[0]);
-    } else {
-      done(new Error('User not found'));
-    }
-  } catch (err) {
-    done(err);
-  }
-});
-
-
 export function app(): express.Express {
   const server = express();
   server.use(bodyParser.json());
   server.use(cors({
     origin: 'http://localhost:4200'
   }));
-  server.use(session({
-    secret: 'use7ys7037286133', // Use a strong secret in production
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false, // Set to true in production with HTTPS
-      maxAge: 1000 * 60 * 60, // 1 hour
-    },
-  }));
-  server.use(passport.initialize());
-  server.use(passport.session());
 
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -107,7 +55,6 @@ export function app(): express.Express {
         'INSERT INTO users (username, password) VALUES ($1, $2)',
         [username, password]
       );
-      // After registration, retrieve the new user and log them in
       const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
       if (result.rows.length > 0) {
         const user = result.rows[0];
@@ -149,45 +96,12 @@ export function app(): express.Express {
     })(req, res, next);
   });
   
-
-
   function ensureAuthenticated(req: express.Request, res: express.Response, next: express.NextFunction) {
     if (req.isAuthenticated && req.isAuthenticated()) {
       return next();
     }
     res.status(401).json({ message: 'Unauthorized' });
   }
-
-  server.post('/api/update-profile', ensureAuthenticated, async (req, res) => {
-    // Passport populates req.user after successful authentication.
-    const user = req.user as any;
-    const userId = user.user_id;
-    const { age, gender, weight_lb, height_ft, height_in } = req.body;
-    try {
-      const updateQuery = `
-        UPDATE users
-        SET age = $1, gender = $2, weight_lb = $3, height_ft = $4, height_in = $5
-        WHERE user_id = $6
-      `;
-      await pool.query(updateQuery, [age, gender, weight_lb, height_ft, height_in, userId]);
-      return res.status(200).json({ message: 'Profile updated successfully' });
-    } catch (error) {
-      console.error('Profile update error:', error);
-      return res.status(500).json({ message: 'Update failed' });
-    }
-  });
-
-  // Logout endpoint
-  server.post('/api/logout', (req, res) => {
-    req.logout((err) => {
-      if (err) {
-        console.error('Logout error:', err);
-        return res.status(500).json({ success: false, message: 'Logout failed' });
-      }
-      res.clearCookie('connect.sid');
-      return res.status(200).json({ success: true, message: 'Logged out successfully' });
-    });
-  });
 
   server.get('**', express.static(browserDistFolder, {
     maxAge: '1y',
