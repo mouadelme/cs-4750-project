@@ -1,0 +1,23 @@
+<!-- navbar.component.html -->
+<nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <a (click)="landing()">Calories Counter</a>
+      </div>
+      <ul class="navbar-menu">
+        <!-- Dashboard is visible only when logged in -->
+        <li *ngIf="authService.isLoggedIn()">
+          <a (click)="dashboard()">Dashboard</a>
+        </li>
+        <!-- Show Login if not logged in -->
+        <li *ngIf="!authService.isLoggedIn()">
+          <a (click)="login()">Login</a>
+        </li>
+        <!-- Show Logout if logged in -->
+        <li *ngIf="authService.isLoggedIn()">
+          <a (click)="logout()">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  

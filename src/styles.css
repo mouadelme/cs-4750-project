@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+html, body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+  --primary-color: #4CAF50;
+  --secondary-color: #FF9800;
+  --accent-color: #03A9F4;
+  --background-color: #F5F5F5;
+  --text-color: #212121;
+  /* Optional gradient for landing page */
+  --landing-gradient-start: #ff7e5f;
+  --landing-gradient-end: #feb47b;
+}
+
+/* Apply global styles */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Open Sans', sans-serif; /* or any other global font */
+  margin: 0;
+  padding: 0;
+}
