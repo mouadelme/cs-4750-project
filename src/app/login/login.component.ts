@@ -3,6 +3,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,7 @@ export class LoginComponent {
   registerPassword = '';
   registerConfirmPassword = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
   toggleMode() {
     this.isLoginMode = !this.isLoginMode;
@@ -39,15 +40,15 @@ export class LoginComponent {
     this.http.post('/api/login', {
       username: this.loginUsername,
       password: this.loginPassword
-    }).subscribe({
-      next: () => {
-        console.log('Login successful');
+    }, { withCredentials: true }).subscribe({
+      next: (response: any) => {
+        console.log('Login successful', response);
+        this.authService.setUser(response.user);
         this.router.navigate(['/dashboard']);
       },
       error: err => {
         if (err.status === 401) {
-          // Assuming a 401 error for incorrect credentials
-          alert("Incorrect password. Please try again.");
+          alert("Incorrect credentials. Please try again.");
         } else {
           alert("Login failed. Please check your credentials and try again.");
         }
@@ -64,10 +65,10 @@ export class LoginComponent {
     this.http.post('/api/register', {
       username: this.registerUsername,
       password: this.registerPassword
-    }).subscribe({
-      next: () => {
-        console.log('Registration success, auto-login now...');
-        // Auto-login after registration
+    }, { withCredentials: true }).subscribe({
+      next: (response: any) => {
+        console.log('Registration success, auto-login now...', response);
+        // Auto-login after registration:
         this.loginUsername = this.registerUsername;
         this.loginPassword = this.registerPassword;
         this.isLoginMode = true;
