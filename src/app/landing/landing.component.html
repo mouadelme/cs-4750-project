@@ -5,7 +5,7 @@
         Track your daily calorie intake, monitor your nutrition, and achieve your goals.
         Our app makes healthy living fun and easy.
       </p>
-      <button class='login-button' (click)="login()">Get Started</button>
+      <button class='login-button' *ngIf="!authService.isLoggedIn()" (click)="login()">Get Started</button>
     </div>
   </div>
   
