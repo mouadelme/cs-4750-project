@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  submitInfo() {
-    this.router.navigate(['/landing']);
+  profile(){
+    this.router.navigate(['/profile']);
   }
 }
