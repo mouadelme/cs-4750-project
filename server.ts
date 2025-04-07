@@ -20,12 +20,62 @@ const pool = new Pool({
   port: 5432,
 });
 
+passport.use(new LocalStrategy(
+  async (username: string, password: string, done: (error: any, user?: any, info?: any) => void) => {
+    try {
+      const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+      if (result.rows.length === 0) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      const user = result.rows[0];
+      // Use proper hashing in production!
+      if (user.password !== password) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+      return done(null, user, undefined);
+    } catch (err) {
+      return done(err, false, undefined);
+    }
+  }
+));
+
+passport.serializeUser((user: any, done) => {
+  done(null, user.user_id);
+});
+
+passport.deserializeUser(async (id: number, done: (err: any, user?: any) => void) => {
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [id]);
+    if (result.rows.length > 0) {
+      done(null, result.rows[0]);
+    } else {
+      done(new Error('User not found'));
+    }
+  } catch (err) {
+    done(err);
+  }
+});
+
 export function app(): express.Express {
   const server = express();
   server.use(bodyParser.json());
   server.use(cors({
-    origin: 'http://localhost:4200'
+    origin: 'http://localhost:4200',
+    credentials: true
   }));
+
+  server.use(session({
+    secret: 'your-very-secret-key', // Replace with a strong secret in production
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // Set to true if using HTTPS
+      maxAge: 1000 * 60 * 60, // 1 hour
+    },
+  }));
+
+  server.use(passport.initialize());
+  server.use(passport.session());
 
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
