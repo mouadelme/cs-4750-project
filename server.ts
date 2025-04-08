@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './src/main.server';
 import { Pool } from 'pg';
+import { AuthService } from './auth.service';
 import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
@@ -28,7 +29,6 @@ passport.use(new LocalStrategy(
         return done(null, false, { message: 'Incorrect username.' });
       }
       const user = result.rows[0];
-      // Use proper hashing in production!
       if (user.password !== password) {
         return done(null, false, { message: 'Incorrect password.' });
       }
@@ -65,7 +65,7 @@ export function app(): express.Express {
   }));
 
   server.use(session({
-    secret: 'your-very-secret-key', // Replace with a strong secret in production
+    secret: 'use7ys123456',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -146,6 +146,7 @@ export function app(): express.Express {
     })(req, res, next);
   });
 
+
   server.get('/api/exercises', async (req, res) => {
     try {
       const exercisesResult = await pool.query(
@@ -155,6 +156,31 @@ export function app(): express.Express {
     } catch (error) {
       console.error('Error fetching exercises:', error);
       res.status(500).json({ error: 'Failed to fetch exercises' });
+
+  server.post('/api/profile', async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+  
+    const { fname, lname, age, weight, height_ft, height_in, gender, username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({message: 'Missing username'});
+    }
+  
+    try {
+      await pool.query(
+        `UPDATE users 
+        SET first_name = $1, last_name = $2, age = $3, gender = $4,
+            weight_lb = $5, height_ft = $6, height_in = $7
+        WHERE username = $8;`,
+        [fname, lname, age, gender, weight, height_ft, height_in, username]
+      );
+  
+      return res.status(200).json({ message: 'Profile updated!' }); 
+    } catch (err) {
+      console.error('Profile update error:', err);
+      return res.status(500).json({ message: 'Internal server error' }); 
     }
   });
 
