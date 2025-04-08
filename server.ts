@@ -157,6 +157,10 @@ export function app(): express.Express {
       console.error('Error fetching exercises:', error);
       res.status(500).json({ error: 'Failed to fetch exercises' });
 
+    }
+  });
+
+
   server.post('/api/profile', async (req, res) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Unauthorized' });
