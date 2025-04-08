@@ -1,8 +1,23 @@
 <div class="dashboard-container">
-    <h2>Dashboard</h2>
-    <div>
-        <h2>Welcome, {{ username }}!</h2>
-        <h3>Go to Profile</h3>
-        <button class="profile" (click)="profile()">Profile</button>
+  <h2>Dashboard</h2>
+  <div>
+    <h2>Welcome, {{ username }}!</h2>
+
+    <!-- Exercise Dropdown -->
+    <div class="exercise-dropdown">
+      <label for="exerciseSelect">Select Exercise:</label>
+      <select id="exerciseSelect" [(ngModel)]="selectedExercise">
+        <option value="" disabled selected>Choose an exercise</option>
+        <option
+          *ngFor="let exercise of exercises"
+          [value]="exercise.exercise_id"
+        >
+          {{ exercise.exercise_description }}
+        </option>
+      </select>
     </div>
+
+    <h3>Go to Profile</h3>
+    <button class="profile" (click)="profile()">Profile</button>
+  </div>
 </div>
