@@ -19,6 +19,7 @@ export class DashboardComponent implements OnInit {
   logs: any[] = [];
   selectedExercise = '';
   duration = 30;
+  exerciseLogs: any[] = [];
 
   constructor(
     private exerciseService: ExerciseService,
@@ -39,7 +40,10 @@ export class DashboardComponent implements OnInit {
   }
 
   logExercise() {
-    if (!this.selectedExercise || !this.duration) return;
+    if (!this.selectedExercise || !this.duration) {
+      alert('Please select an exercise and enter a duration.');
+      return;
+    }
 
     const payload = {
       exercise_id: this.selectedExercise,
@@ -55,8 +59,20 @@ export class DashboardComponent implements OnInit {
 
   loadExerciseLogs() {
     this.http.get<any[]>(`/api/user-exercises/${this.username}`).subscribe({
-      next: data => this.logs = data,
-      error: err => console.error('Error loading logs:', err)
+      next: (data: any) => { this.logs = data; },
+      error: err => { console.error('Error fetching logs', err); }
+    });
+  }
+
+  deleteLog(log_id: number){
+    this.http.delete(`/api/exercise-log/${log_id}`, { withCredentials: true }).subscribe({
+      next: () => {
+        this.logs = this.logs.filter(log => log.exercise_log_id !== log_id);
+      },
+      error: err => {
+        console.error('Failed to delete log:', err);
+        alert('Could not delete log. Please try again.');
+      }
     });
   }
 
