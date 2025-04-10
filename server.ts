@@ -90,7 +90,7 @@ export function app(): express.Express {
 
   server.get('/api/test-db', async (req, res) => {
     try {
-      const result = await pool.query('SELECT * FROM users');
+      const result = await pool.query('SELECT * FROM exercise_log');
       res.json(result.rows);
     } catch (error) {
       console.error('Database connection error:', error);
@@ -160,6 +160,47 @@ export function app(): express.Express {
     }
   });
 
+
+  server.post('/api/log-exercise', async (req, res) => {
+    const { exercise_id, duration_min, username } = req.body;
+  
+    if (!username || !exercise_id || !duration_min) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    
+    try {
+      await pool.query(
+        `INSERT INTO exercise_log (exercise_id, duration_min, username, exercise_date)
+         VALUES ($1, $2, $3, NOW())`,
+        [exercise_id, duration_min, username]
+      );
+      return res.status(201).json({ message: 'Exercise logged successfully!' });
+    } catch (err) {
+      console.error('Logging exercise failed:', err);
+      return res.status(500).json({ message: 'Server error while logging exercise' });
+    }
+  });
+  
+
+  server.get('/api/user-exercises/:username', async (req, res) => {
+    const { username } = req.params;
+  
+    try {
+      const result = await pool.query(
+        `SELECT el.duration_min, el.exercise_date, e.exercise_type, e.exercise_description
+         FROM exercise_log el
+         JOIN exercise e ON el.exercise_id = e.exercise_id
+         WHERE el.username = $1
+         ORDER BY el.exercise_date DESC`,
+        [username]
+      );
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Failed to fetch exercise logs:', err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
 
   server.post('/api/profile', async (req, res) => {
     if (!req.user) {

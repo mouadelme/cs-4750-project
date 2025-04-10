@@ -1,23 +1,29 @@
 <div class="dashboard-container">
-  <h2>Dashboard</h2>
-  <div>
-    <h2>Welcome, {{ username }}!</h2>
+  <h2>Welcome, {{ username }}!</h2>
 
-    <!-- Exercise Dropdown -->
-    <div class="exercise-dropdown">
-      <label for="exerciseSelect">Select Exercise:</label>
-      <select id="exerciseSelect" [(ngModel)]="selectedExercise">
-        <option value="" disabled selected>Choose an exercise</option>
-        <option
-          *ngFor="let exercise of exercises"
-          [value]="exercise.exercise_id"
-        >
-          {{ exercise.exercise_description }}
-        </option>
-      </select>
-    </div>
+  <div class="card">
+    <label>Select Exercise</label>
+    <select [(ngModel)]="selectedExercise">
+      <option value="" disabled selected>Choose an exercise</option>
+      <option *ngFor="let exercise of exercises" [value]="exercise.exercise_id">
+        {{ exercise.exercise_description }} ({{ exercise.exercise_type }})
+      </option>
+    </select>
 
-    <h3>Go to Profile</h3>
-    <button class="profile" (click)="profile()">Profile</button>
+    <label>Duration (minutes)</label>
+    <input type="number" [(ngModel)]="duration" min="1" placeholder="Duration in minutes">
+
+    <button (click)="logExercise()">Log Exercise</button>
   </div>
+
+  <h3>Your Exercise Logs</h3>
+  <div class="logs" *ngIf="logs.length > 0; else noLogs">
+    <div class="log" *ngFor="let log of logs">
+      <strong>{{ log.exercise_type }}</strong> — {{ log.exercise_description }} <br>
+      {{ log.duration_min }} minutes on {{ log.exercise_date | date: 'medium' }}
+    </div>
+  </div>
+  <ng-template #noLogs><p>No logs yet. Start moving!</p></ng-template>
+
+  <button class="profile" (click)="profile()">Update Profile</button>
 </div>

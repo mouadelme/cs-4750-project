@@ -4,6 +4,7 @@ import { AuthService } from '../../../auth.service';
 import { ExerciseService, Exercise } from '../services/exercise.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,36 +16,48 @@ import { FormsModule } from '@angular/forms';
 export class DashboardComponent implements OnInit {
   exercises: Exercise[] = [];
   username = '';
-  selectedExercise: number | null = null;
+  logs: any[] = [];
+  selectedExercise = '';
+  duration = 30;
 
   constructor(
     private exerciseService: ExerciseService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    // Fetch exercises
-    this.exerciseService.getExercises().subscribe({
-      next: (data) => {
-        this.exercises = data;
-      },
-      error: (err) => console.error('Failed to load exercises:', err),
+    const user = this.authService.getUser();
+    this.username = user?.username;
+
+    this.http.get<any[]>('/api/exercises').subscribe(data => {
+      this.exercises = data;
     });
 
-    // Get logged-in user
-    const user = this.authService.getUser();
-    if (user) {
-      this.username = user.username;
-    } else {
-      // Optionally, redirect to login if user is not logged in
-      this.router.navigate(['/login']);
-    }
+    this.loadExerciseLogs();
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+  logExercise() {
+    if (!this.selectedExercise || !this.duration) return;
+
+    const payload = {
+      exercise_id: this.selectedExercise,
+      duration_min: this.duration,
+      username: this.username
+    };
+
+    this.http.post('/api/log-exercise', payload).subscribe({
+      next: () => this.loadExerciseLogs(),
+      error: err => console.error('Error logging exercise:', err)
+    });
+  }
+
+  loadExerciseLogs() {
+    this.http.get<any[]>(`/api/user-exercises/${this.username}`).subscribe({
+      next: data => this.logs = data,
+      error: err => console.error('Error loading logs:', err)
+    });
   }
 
   profile() {
