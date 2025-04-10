@@ -31,4 +31,8 @@ export class NavbarComponent {
     this.router.navigate(['/dashboard']);
   }
 
+  profile() {
+    this.router.navigate(['/profile']);
+  }
+
 }

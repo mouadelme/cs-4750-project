@@ -167,7 +167,7 @@ export function app(): express.Express {
     if (!username || !exercise_id || !duration_min) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-    
+
     try {
       await pool.query(
         `INSERT INTO exercise_log (exercise_id, duration_min, username, exercise_date)
@@ -186,20 +186,22 @@ export function app(): express.Express {
     const { username } = req.params;
   
     try {
-      const result = await pool.query(
-        `SELECT el.duration_min, el.exercise_date, e.exercise_type, e.exercise_description
-         FROM exercise_log el
-         JOIN exercise e ON el.exercise_id = e.exercise_id
-         WHERE el.username = $1
-         ORDER BY el.exercise_date DESC`,
-        [username]
-      );
+      const result = await pool.query(`
+        SELECT el.exercise_log_id, el.duration_min, el.exercise_date,
+               e.exercise_type, e.exercise_description
+        FROM exercise_log el
+        JOIN exercise e ON el.exercise_id = e.exercise_id
+        WHERE el.username = $1
+        ORDER BY el.exercise_date DESC
+      `, [username]);
+  
       res.json(result.rows);
     } catch (err) {
       console.error('Failed to fetch exercise logs:', err);
       res.status(500).json({ message: 'Server error' });
     }
   });
+  
   
 
   server.post('/api/profile', async (req, res) => {
@@ -226,6 +228,21 @@ export function app(): express.Express {
     } catch (err) {
       console.error('Profile update error:', err);
       return res.status(500).json({ message: 'Internal server error' }); 
+    }
+  });
+
+  server.delete('/api/exercise-log/:logId', async (req, res) => {
+    const logId = req.params.logId;
+
+    try {
+      await pool.query(
+        `DELETE FROM exercise_log WHERE exercise_log_id = $1`,
+        [logId]
+      );
+      return res.status(201).json({ message: 'Exercise logged successfully!' });
+    } catch (err) {
+      console.error('Logging exercise failed:', err);
+      return res.status(500).json({ message: 'Server error while logging exercise' });
     }
   });
 

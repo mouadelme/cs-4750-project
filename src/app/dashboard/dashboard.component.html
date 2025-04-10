@@ -19,8 +19,9 @@
   <h3>Your Exercise Logs</h3>
   <div class="logs" *ngIf="logs.length > 0; else noLogs">
     <div class="log" *ngFor="let log of logs">
-      <strong>{{ log.exercise_type }}</strong> — {{ log.exercise_description }} <br>
+      <strong>{{ log.exercise_type }}</strong> {{ log.exercise_description }} <br>
       {{ log.duration_min }} minutes on {{ log.exercise_date | date: 'medium' }}
+      <button class="delete-button" (click)="deleteLog(log.exercise_log_id)">x</button>
     </div>
   </div>
   <ng-template #noLogs><p>No logs yet. Start moving!</p></ng-template>
