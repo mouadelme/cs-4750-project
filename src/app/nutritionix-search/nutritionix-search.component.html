@@ -1,0 +1,19 @@
+<div class="nutritionix-search">
+    <h2>Nutritionix Food Search</h2>
+  
+    <input [(ngModel)]="foodName" placeholder="Enter food name" />
+    <button (click)="searchFood()" [disabled]="loading || !foodName.trim()">Search</button>
+  
+    <div *ngIf="loading">Loading...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+  
+    <div *ngIf="result" class="result">
+      <h3>{{ result.food_name }}</h3>
+      <p><strong>Serving Size:</strong> {{ result.serving_qty }} {{ result.serving_unit }}</p>
+      <p><strong>Calories:</strong> {{ result.nf_calories }}</p>
+      <p><strong>Protein:</strong> {{ result.nf_protein }}g</p>
+      <p><strong>Carbohydrates:</strong> {{ result.nf_total_carbohydrate }}g</p>
+      <p><strong>Fat:</strong> {{ result.nf_total_fat }}g</p>
+    </div>
+  </div>
+  
