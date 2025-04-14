@@ -1,22 +1,103 @@
 <div class="profile-container">
-    <h2>Enter your information below:</h2>
-    <form class="profile-form" (ngSubmit)="submitInfo()" #profileForm="ngForm">
-      <div *ngIf="error" class="error">{{ error }}</div>
-  
-      <input type="text" name="fname" [(ngModel)]="profile.fname" placeholder="First name" required>
-      <input type="text" name="lname" [(ngModel)]="profile.lname" placeholder="Last name" required>
-      <input type="number" name="age" [(ngModel)]="profile.age" placeholder="Age" min="1" required>
-      <select name="gender" [(ngModel)]="profile.gender" required>
-        <option value="" disabled selected>Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-      <input type="number" name="weight" [(ngModel)]="profile.weight" placeholder="Weight (lbs)" min="1" required>
-      <input type="number" name="height_ft" [(ngModel)]="profile.height_ft" placeholder="Height (ft)" min="1" required>
-      <input type="number" name="height_in" [(ngModel)]="profile.height_in" placeholder="Height (in)" min="0" max="11" required>
-  
-      <button type="submit">Enter</button>
-    </form>
+  <div *ngIf="loading" class="loading">Loading profile data...</div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Profile Information Display -->
+    <div *ngIf="hasExistingProfile && !showEditForm" class="profile-info">
+      <h2>Your Profile</h2>
+      <div class="profile-details">
+        <p><strong>Name:</strong> {{ profile.fname }} {{ profile.lname }}</p>
+        <p><strong>Age:</strong> {{ profile.age }}</p>
+        <p><strong>Gender:</strong> {{ profile.gender }}</p>
+        <p><strong>Weight:</strong> {{ profile.weight }} lbs</p>
+        <p>
+          <strong>Height:</strong> {{ profile.height_ft }}'
+          {{ profile.height_in }}"
+        </p>
+      </div>
+      <button class="update-button" (click)="toggleEditForm()">
+        Update Information
+      </button>
+    </div>
+
+    <!-- Profile Edit Form -->
+    <div *ngIf="showEditForm || !hasExistingProfile">
+      <h2>{{ hasExistingProfile ? "Update" : "Enter" }} your information:</h2>
+      <form
+        class="profile-form"
+        (ngSubmit)="submitInfo()"
+        #profileForm="ngForm"
+      >
+        <div *ngIf="error" class="error">{{ error }}</div>
+
+        <input
+          type="text"
+          name="fname"
+          [(ngModel)]="profile.fname"
+          placeholder="First name"
+          required
+        />
+        <input
+          type="text"
+          name="lname"
+          [(ngModel)]="profile.lname"
+          placeholder="Last name"
+          required
+        />
+        <input
+          type="number"
+          name="age"
+          [(ngModel)]="profile.age"
+          placeholder="Age"
+          min="1"
+          required
+        />
+        <select name="gender" [(ngModel)]="profile.gender" required>
+          <option value="" disabled selected>Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+        <input
+          type="number"
+          name="weight"
+          [(ngModel)]="profile.weight"
+          placeholder="Weight (lbs)"
+          min="1"
+          required
+        />
+        <input
+          type="number"
+          name="height_ft"
+          [(ngModel)]="profile.height_ft"
+          placeholder="Height (ft)"
+          min="1"
+          required
+        />
+        <input
+          type="number"
+          name="height_in"
+          [(ngModel)]="profile.height_in"
+          placeholder="Height (in)"
+          min="0"
+          max="11"
+          required
+        />
+
+        <div class="form-buttons">
+          <button type="submit">
+            {{ hasExistingProfile ? "Save Changes" : "Create Profile" }}
+          </button>
+          <button
+            type="button"
+            *ngIf="hasExistingProfile"
+            class="cancel-button"
+            (click)="toggleEditForm()"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </ng-container>
 </div>
-  
