@@ -220,6 +220,21 @@ export function app(): express.Express {
     }
   });
 
+  server.delete('/api/exercise-log/:logId', async (req, res) => {
+    const logId = req.params.logId;
+
+    try {
+      await pool.query(
+        `DELETE FROM exercise_log WHERE exercise_log_id = $1`,
+        [logId]
+      );
+      return res.status(201).json({ message: 'Exercise logged successfully!' });
+    } catch (err) {
+      console.error('Logging exercise failed:', err);
+      return res.status(500).json({ message: 'Server error while logging exercise' });
+    }
+  });
+
   server.get('**', express.static(browserDistFolder, {
     maxAge: '1y',
     index: 'index.html',
