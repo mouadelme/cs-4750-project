@@ -34,5 +34,7 @@ export class NavbarComponent {
   profile() {
     this.router.navigate(['/profile']);
   }
-
+  searchFood() {
+    this.router.navigate(['/nutritionix-search']);  
+  }
 }
