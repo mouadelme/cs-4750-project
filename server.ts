@@ -201,8 +201,6 @@ export function app(): express.Express {
       res.status(500).json({ message: 'Server error' });
     }
   });
-  
-  
 
   server.post('/api/profile', async (req, res) => {
     if (!req.user) {
@@ -228,6 +226,38 @@ export function app(): express.Express {
     } catch (err) {
       console.error('Profile update error:', err);
       return res.status(500).json({ message: 'Internal server error' }); 
+    }
+  });
+
+  server.get('/api/profile', async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+  
+    try {
+      const username = (req.user as any).username;
+      const result = await pool.query(
+        'SELECT first_name, last_name, age, gender, weight_lb, height_ft, height_in FROM users WHERE username = $1',
+        [username]
+      );
+      
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: 'Profile not found' });
+      }
+      
+      const profile = result.rows[0];
+      return res.status(200).json({
+        fname: profile.first_name || '',
+        lname: profile.last_name || '',
+        age: profile.age || null,
+        gender: profile.gender || '',
+        weight: profile.weight_lb || null,
+        height_ft: profile.height_ft || null,
+        height_in: profile.height_in || null
+      });
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      return res.status(500).json({ message: 'Internal server error' });
     }
   });
 

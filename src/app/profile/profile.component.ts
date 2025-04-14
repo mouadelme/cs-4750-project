@@ -16,14 +16,17 @@ export class ProfileComponent implements OnInit {
   profile = {
     fname: '',
     lname: '',
-    age: null,
+    age: null as number | null,
     gender: '',
-    weight: null,
-    height_ft: null,
-    height_in: null,
+    weight: null as number | null,
+    height_ft: null as number | null,
+    height_in: null as number | null,
     username: ''
   };
-
+  
+  hasExistingProfile = false;
+  showEditForm = false;
+  loading = true;
   error: string | null = null;
 
   constructor(private router: Router, private http: HttpClient, private authService: AuthService) {}
@@ -32,9 +35,60 @@ export class ProfileComponent implements OnInit {
     const user = this.authService.getUser();
     if (user && user.username) {
       this.profile.username = user.username;
+      this.fetchUserProfile();
     } else {
       this.error = 'User not found. Please log in again.';
+      this.loading = false;
+      this.showEditForm = true; // Show form if not logged in
     }
+  }
+
+  fetchUserProfile() {
+    this.http.get('/api/profile', { withCredentials: true }).subscribe({
+      next: (data: any) => {
+        if (data && this.isProfileComplete(data)) {
+          this.profile = {
+            ...data,
+            username: this.profile.username
+          };
+          this.hasExistingProfile = true;
+          this.showEditForm = false; // Hide form initially when profile exists
+        } else {
+          this.hasExistingProfile = false;
+          this.showEditForm = true; // Show form when no profile
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        // Any error means we should show the form
+        this.hasExistingProfile = false;
+        this.showEditForm = true;
+        
+        if (err.status !== 404) { // 404 is expected if no profile
+          console.error('Error fetching profile:', err);
+          this.error = 'Failed to load profile data. Try again later.';
+        }
+        this.loading = false;
+      }
+    });
+  }
+
+  // Check if the profile has all required fields filled
+  isProfileComplete(profile: any): boolean {
+    return !!(
+      profile.fname && 
+      profile.lname && 
+      profile.age && 
+      profile.gender && 
+      profile.weight && 
+      profile.height_ft !== null && 
+      profile.height_in !== null
+    );
+  }
+
+  toggleEditForm() {
+    this.showEditForm = !this.showEditForm;
+    this.error = null; // Clear any errors when toggling
   }
 
   submitInfo() {
@@ -52,6 +106,8 @@ export class ProfileComponent implements OnInit {
 
     this.http.post('/api/profile', this.profile, { withCredentials: true }).subscribe({
       next: () => {
+        this.hasExistingProfile = true;
+        this.showEditForm = false; // Hide form after successful save
         alert('Profile saved successfully!');
       },
       error: (err: any) => {
