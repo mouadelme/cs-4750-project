@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import axios from 'axios';
 
+
 @Component({
   selector: 'app-nutritionix-search',
   standalone: true,
@@ -11,14 +12,25 @@ import axios from 'axios';
   templateUrl: './nutritionix-search.component.html',
   styleUrls: ['./nutritionix-search.component.css']
 })
+
+
 export class NutritionixSearchComponent {
   foodName = '';
   result: any = null;
   loading = false;
   error: string | null = null;
 
+  mealTypes: string[] = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert'];
+  selectedMeal = '';
+  servings: number = 1;
+
+
   private appId = 'ddf68a64';
   private appKey = '3426137af00a32d5719868a2f7f8966b';
+
+  logFood(){
+
+  }
 
   async searchFood() {
     this.loading = true;
