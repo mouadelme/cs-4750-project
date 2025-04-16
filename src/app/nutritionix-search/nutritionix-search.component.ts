@@ -45,32 +45,41 @@ export class NutritionixSearchComponent implements OnInit {
 }
 
 
-  logFood() {
-    if (!this.result || !this.selectedMeal || !this.servings) {
-      alert("Please select a meal and enter the number of servings.");
-      return;
-    }
-    
-    const user = this.authService.getUser();
-    this.username = user?.username;
-    const foodData = {
-      username: this.username, // TODO: replace with real user or pull from session
-      meal_type: this.selectedMeal.toLowerCase(),
-      quantity: this.servings,
-      protein: this.result.nf_protein * this.servings,
-      fat: this.result.nf_total_fat * this.servings,
-      carbs: this.result.nf_total_carbohydrate * this.servings,
-    };
-  
-    axios.post('/api/log-food', foodData, { withCredentials: true })
-      .then(response => {
-        alert('Food logged successfully!');
-      })
-      .catch(error => {
-        console.error('Error logging food:', error);
-        alert('Failed to log food.');
-      });
+logFood() {
+  const user = this.authService.getUser();
+  this.username = user?.username;
+  console.log('Logging food...');
+  console.log('Result:', this.result);
+  console.log('Selected Meal:', this.selectedMeal);
+  console.log('Servings:', this.servings);
+  //console.log('Username:', this.username);
+
+  if (!this.result || !this.selectedMeal || !this.servings || !this.username) {
+    alert("Missing required information.");
+    return;
   }
+
+
+  const foodData = {
+    username: this.username,
+    meal_type: this.selectedMeal.toLowerCase(),
+    quantity: this.servings,
+    protein: parseFloat((parseFloat(this.result.nf_protein) * this.servings).toFixed(2)),
+    fat: parseFloat((parseFloat(this.result.nf_total_fat) * this.servings).toFixed(2)),
+    carbs: parseFloat((parseFloat(this.result.nf_total_carbohydrate) * this.servings).toFixed(2)),
+    calories: Math.round(parseFloat(this.result.nf_calories) * this.servings),
+    food_name: this.result.food_name
+  };
+
+  axios.post('/api/log-food', foodData, { withCredentials: true })
+    .then(() => alert('Food logged successfully!'))
+    .catch(error => {
+      console.error('Error logging food:', error);
+      alert('Failed to log food.');
+    });
+}
+
+
   
 
   async searchFood() {
