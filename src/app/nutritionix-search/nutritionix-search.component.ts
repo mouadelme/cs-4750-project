@@ -2,7 +2,10 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../auth.service';
+import { OnInit } from '@angular/core';
 import axios from 'axios';
+
 
 
 @Component({
@@ -14,7 +17,8 @@ import axios from 'axios';
 })
 
 
-export class NutritionixSearchComponent {
+export class NutritionixSearchComponent implements OnInit {
+  constructor(private authService: AuthService) {}
   foodName = '';
   result: any = null;
   loading = false;
@@ -28,9 +32,46 @@ export class NutritionixSearchComponent {
   private appId = 'ddf68a64';
   private appKey = '3426137af00a32d5719868a2f7f8966b';
 
-  logFood(){
+  username: string = '';
 
+  ngOnInit() {
+    axios.get('/api/current-user', { withCredentials: true })
+      .then(res => {
+        this.username = res.data.username;
+      })
+      .catch(err => {
+        console.error('Failed to fetch user:', err);
+      });
+}
+
+
+  logFood() {
+    if (!this.result || !this.selectedMeal || !this.servings) {
+      alert("Please select a meal and enter the number of servings.");
+      return;
+    }
+    
+    const user = this.authService.getUser();
+    this.username = user?.username;
+    const foodData = {
+      username: this.username, // TODO: replace with real user or pull from session
+      meal_type: this.selectedMeal.toLowerCase(),
+      quantity: this.servings,
+      protein: this.result.nf_protein * this.servings,
+      fat: this.result.nf_total_fat * this.servings,
+      carbs: this.result.nf_total_carbohydrate * this.servings,
+    };
+  
+    axios.post('/api/log-food', foodData, { withCredentials: true })
+      .then(response => {
+        alert('Food logged successfully!');
+      })
+      .catch(error => {
+        console.error('Error logging food:', error);
+        alert('Failed to log food.');
+      });
   }
+  
 
   async searchFood() {
     this.loading = true;
