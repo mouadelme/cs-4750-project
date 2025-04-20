@@ -11,6 +11,5 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'landing', component: LandingComponent},
-    { path: 'nutritionix-search', component: NutritionixSearchComponent },
     { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

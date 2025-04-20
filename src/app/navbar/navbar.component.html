@@ -20,9 +20,6 @@
         <li *ngIf="authService.isLoggedIn()" class = "logout">
           <a (click)="logout()">Logout</a>
         </li>
-        <li *ngIf="authService.isLoggedIn()">
-          <a (click)="searchFood()">Search Food</a>
-        </li>
       </ul>
     </div>
   </nav>

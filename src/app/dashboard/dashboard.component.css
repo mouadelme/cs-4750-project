@@ -4,6 +4,30 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* NEW: Wrap both containers */
+.main-dashboard {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Override margin:auto for left alignment in flex */
+.dashboard-container {
+  margin: 0;
+}
+
+/* NEW: Right-side container */
+.right-container {
+  max-width: 400px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
 .card {
   background: #f9f9f9;
   padding: 20px;
@@ -43,7 +67,7 @@ button {
 }
 
 .delete-button {
-  background-color: #dc3545;;
+  background-color: #dc3545;
   color: #fff;
   border: none;
   padding: 12px 16px;
