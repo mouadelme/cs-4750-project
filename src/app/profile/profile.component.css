@@ -1,3 +1,46 @@
+.profile-info {
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
+  border-radius: 0;
+  text-align: left;
+}
+
+.profile-info h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.profile-details p {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #444;
+}
+
+.profile-details strong {
+  color: #222;
+}
+
+.update-button {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.update-button:hover {
+  background-color: #0056b3;
+}
+
 .profile-container {
   width: 100%;
   max-width: 400px;
@@ -76,12 +119,12 @@
 }
 
 .form-buttons {
-display: flex;
-justify-content: space-between;
-gap: 10px;
-margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .form-buttons button {
-flex: 1;
+  flex: 1;
 }

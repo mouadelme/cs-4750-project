@@ -1,39 +1,86 @@
-<div class="main-dashboard">
-  <!-- Left Section: Existing dashboard -->
-  <div class="dashboard-container">
-    <h2>Welcome, {{ username }}!</h2>
+<div class="dashboard-wrapper">
+  <h2>Welcome, {{ username }}!</h2>
 
-    <div class="card">
+  <div class="summary-card">
+    <div class="summary-header">
+      <div class="toggle-switch">
+        <button
+          [class.active]="summaryType === 'daily'"
+          (click)="setSummaryType('daily')"
+        >
+          Daily
+        </button>
+        <button
+          [class.active]="summaryType === 'all-time'"
+          (click)="setSummaryType('all-time')"
+        >
+          All-Time
+        </button>
+      </div>
+      <h3>
+        {{ summary.timeframe || 'Daily Summary' }}
+        <span *ngIf="summary.date">({{ summary.date }})</span>
+      </h3>
+    </div>
+  
+    <p>Calories Consumed: {{ summary.calories_consumed }}</p>
+    <p>Calories Burned: {{ summary.calories_burned }}</p>
+    <p *ngIf="summary.resting_burn">Resting Burn: {{ summary.resting_burn }}</p>
+    <p *ngIf="summary.active_burn">Active Burn: {{ summary.active_burn }}</p>
+    <p>
+      <strong>Net: {{ summary.net_calories }} ({{ summary.status }})</strong>
+    </p>
+  </div>
+  
+
+  <!-- Forms Row -->
+  <div class="form-row">
+    <!-- Left: Exercise Input -->
+    <div class="form-card">
+      <h4>Log Exercise</h4>
       <label>Select Exercise</label>
       <select [(ngModel)]="selectedExercise">
-        <option value="" disabled selected>Choose an exercise</option>
         <option *ngFor="let exercise of exercises" [value]="exercise.exercise_id">
           {{ exercise.exercise_description }} ({{ exercise.exercise_type }})
         </option>
       </select>
-
       <label>Duration (minutes)</label>
-      <input type="number" [(ngModel)]="duration" min="1" placeholder="Duration in minutes">
-
+      <input type="number" [(ngModel)]="duration" placeholder="e.g. 30" min="1" />
+      <label>Calories Burned</label>
+      <input type="number" [(ngModel)]="caloriesBurned" placeholder="e.g. 250" min="1" />
       <button (click)="logExercise()">Log Exercise</button>
     </div>
 
-    <h3>Your Exercise Logs</h3>
-    <div class="logs" *ngIf="logs.length > 0; else noLogs">
+    <!-- Right: Food Input -->
+    <div class="form-card">
+      <app-nutritionix-search></app-nutritionix-search>
+    </div>
+  </div>
+
+  <!-- Logs Row -->
+  <div class="logs-row">
+    <!-- Left: Exercise Logs -->
+    <div class="log-section">
+      <h4>Your Exercise Logs</h4>
       <div class="log" *ngFor="let log of logs">
-        <strong>{{ log.exercise_type }}</strong> {{ log.exercise_description }} <br>
-        {{ log.duration_min }} minutes on {{ log.exercise_date | date: 'medium' }}
+        <strong>{{ log.exercise_type }}</strong> {{ log.exercise_description }} <br />
+        {{ log.duration_min }} min on {{ log.exercise_date | date: 'medium' }}
         <button class="delete-button" (click)="deleteLog(log.exercise_log_id)">x</button>
       </div>
     </div>
-    <ng-template #noLogs><p>No logs yet. Start moving!</p></ng-template>
 
-    <button class="profile" (click)="profile()">Update Profile</button>
+    <!-- Right: Food Logs -->
+    <div class="log-section">
+      <h4>Your Food Logs</h4>
+      <div class="log" *ngFor="let food of foodLogs">
+        <strong>{{ food.food_name }}</strong> ({{ food.meal_type }}) <br>
+        {{ food.quantity }} serving(s), {{ food.calories }} cal — 
+        P: {{ food.protein }}g, F: {{ food.fat }}g, C: {{ food.carbs }}g <br>
+        Logged on: {{ food.date | date:'medium' }}
+        <button class="delete-button" (click)="deleteFoodLog(food.meal_id)">x</button>
+      </div>      
+    </div>
   </div>
 
-  <!-- Right Section: New container -->
-  <div class="right-container">
-    <app-nutritionix-search></app-nutritionix-search>
-  </div>
-  
+  <button class="profile" (click)="profile()">Update Profile</button>
 </div>

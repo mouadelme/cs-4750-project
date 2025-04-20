@@ -98,6 +98,14 @@ export function app(): express.Express {
     }
   });
 
+  server.get('/api/current-user', (req, res) => {
+    if (req.isAuthenticated()) {
+      res.json({ username: (req.user as any).username });
+    } else {
+      res.status(401).json({ message: 'Not authenticated' });
+    }
+  });
+  
   server.post('/api/register', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -162,17 +170,17 @@ export function app(): express.Express {
 
 
   server.post('/api/log-exercise', async (req, res) => {
-    const { exercise_id, duration_min, username } = req.body;
+    const { exercise_id, duration_min, calories_burned, username } = req.body;
   
-    if (!username || !exercise_id || !duration_min) {
+    if (!username || !exercise_id || !duration_min || !calories_burned) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-
+  
     try {
       await pool.query(
-        `INSERT INTO exercise_log (exercise_id, duration_min, username, exercise_date)
-         VALUES ($1, $2, $3, NOW())`,
-        [exercise_id, duration_min, username]
+        `INSERT INTO exercise_log (exercise_id, duration_min, calories_burned, username, exercise_date)
+         VALUES ($1, $2, $3, $4, NOW())`,
+        [exercise_id, duration_min, calories_burned, username]
       );
       return res.status(201).json({ message: 'Exercise logged successfully!' });
     } catch (err) {
@@ -181,7 +189,6 @@ export function app(): express.Express {
     }
   });
   
-
   server.get('/api/user-exercises/:username', async (req, res) => {
     const { username } = req.params;
   
@@ -201,6 +208,49 @@ export function app(): express.Express {
       res.status(500).json({ message: 'Server error' });
     }
   });
+
+  server.post('/api/log-food', async (req, res) => {
+    const { username, meal_type, quantity, protein, fat, carbs, calories, food_name } = req.body;
+  
+    if (!username || !meal_type || !quantity || !food_name) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+  
+    try {
+      await pool.query(
+        `INSERT INTO food_log 
+        (username, meal_type, quantity, date, protein, fat, carbs, calories, food_name) 
+        VALUES ($1, $2, $3, NOW(), $4, $5, $6, $7, $8)`,
+        [username, meal_type, quantity, protein, fat, carbs, calories, food_name]
+      );
+  
+      return res.status(201).json({ message: 'Food logged successfully' });
+    } catch (err) {
+      console.error('Failed to log food:', err);
+      return res.status(500).json({ message: 'Server error while logging food' });
+    }
+  });
+  
+
+  server.get('/api/user-food/:username', async (req, res) => {
+    const { username } = req.params;
+  
+    try {
+      const result = await pool.query(
+        `SELECT meal_id, meal_type, quantity, date, protein, fat, carbs, calories, food_name
+         FROM food_log
+         WHERE username = $1
+         ORDER BY date DESC`,
+        [username]
+      );
+  
+      res.status(200).json(result.rows);
+    } catch (err) {
+      console.error('Failed to fetch food logs:', err);
+      res.status(500).json({ message: 'Server error fetching food logs' });
+    }
+  });
+  
 
   server.post('/api/profile', async (req, res) => {
     if (!req.user) {
@@ -275,6 +325,142 @@ export function app(): express.Express {
       return res.status(500).json({ message: 'Server error while logging exercise' });
     }
   });
+
+  server.delete('/api/food-log/:mealId', async (req, res) => {
+    const mealId = req.params.mealId;
+  
+    try {
+      await pool.query('DELETE FROM food_log WHERE meal_id = $1', [mealId]);
+      return res.status(200).json({ message: 'Food log deleted' });
+    } catch (err) {
+      console.error('Failed to delete food log:', err);
+      return res.status(500).json({ message: 'Server error deleting food log' });
+    }
+  });
+  
+  function calculateBMR(gender: string, weight_lb: number, height_ft: number, height_in: number, age: number) {
+    const weight_kg = weight_lb * 0.453592;
+    const height_cm = ((height_ft * 12) + height_in) * 2.54;
+  
+    if (gender === 'male') {
+      return Math.round(10 * weight_kg + 6.25 * height_cm - 5 * age + 5);
+    } else if (gender === 'female') {
+      return Math.round(10 * weight_kg + 6.25 * height_cm - 5 * age - 161);
+    } else {
+      return Math.round(10 * weight_kg + 6.25 * height_cm - 5 * age); // fallback
+    }
+  }
+  
+  server.get('/api/summary/:username/today', async (req, res) => {
+    const { username } = req.params;
+    const today = new Date().toISOString().split('T')[0];
+  
+    try {
+      const profileRes = await pool.query(
+        `SELECT age, weight_lb, height_ft, height_in, gender FROM users WHERE username = $1`,
+        [username]
+      );
+
+      const profile = profileRes.rows[0];
+      const bmr = calculateBMR(
+        profile.gender,
+        profile.weight_lb,
+        profile.height_ft,
+        profile.height_in,
+        profile.age
+      );
+  
+      const foodRes = await pool.query(
+        `SELECT SUM(calories) as total_consumed
+         FROM food_log
+         WHERE username = $1 AND DATE(date) = $2`,
+        [username, today]
+      );
+  
+      const exerciseRes = await pool.query(
+        `SELECT SUM(calories_burned) as total_burned
+         FROM exercise_log
+         WHERE username = $1 AND DATE(exercise_date) = $2`,
+        [username, today]
+      );
+  
+      const caloriesConsumed = parseFloat(foodRes.rows[0].total_consumed);
+      const activeCalories = parseFloat(exerciseRes.rows[0].total_burned);
+      const totalCaloriesBurned = activeCalories + bmr;
+      const netCalories = caloriesConsumed - totalCaloriesBurned;
+  
+      res.json({
+        date: today,
+        calories_consumed: caloriesConsumed,
+        calories_burned: totalCaloriesBurned,
+        net_calories: netCalories,
+        resting_burn: bmr,
+        active_burn: activeCalories,
+        status: netCalories > 0 ? 'Surplus' : 'Deficit'
+      });
+    } catch (err) {
+      console.error('Error generating summary:', err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  server.get('/api/summary/:username/all-time', async (req, res) => {
+    const { username } = req.params;
+  
+    try {
+      const profileRes = await pool.query(
+        `SELECT age, weight_lb, height_ft, height_in, gender FROM users WHERE username = $1`,
+        [username]
+      );
+  
+      const profile = profileRes.rows[0];
+      const bmr = calculateBMR(
+        profile.gender,
+        profile.weight_lb,
+        profile.height_ft,
+        profile.height_in,
+        profile.age
+      );
+  
+      const foodRes = await pool.query(
+        `SELECT SUM(calories) as total_consumed FROM food_log WHERE username = $1`,
+        [username]
+      );
+  
+      const exerciseRes = await pool.query(
+        `SELECT SUM(calories_burned) as total_burned FROM exercise_log WHERE username = $1`,
+        [username]
+      );
+  
+      const daysLoggedRes = await pool.query(
+        `SELECT COUNT(DISTINCT DATE(date)) AS days_logged FROM food_log WHERE username = $1`,
+        [username]
+      );
+  
+      const caloriesConsumed = parseFloat(foodRes.rows[0].total_consumed);
+      const activeCalories = parseFloat(exerciseRes.rows[0].total_burned);
+      const daysLogged = parseInt(daysLoggedRes.rows[0].days_logged || '1');
+      const restingCalories = daysLogged * bmr;
+  
+      const totalCaloriesBurned = restingCalories + activeCalories;
+      const netCalories = caloriesConsumed - totalCaloriesBurned;
+  
+      res.json({
+        timeframe: 'All Time',
+        calories_consumed: caloriesConsumed,
+        calories_burned: totalCaloriesBurned,
+        resting_burn: restingCalories,
+        active_burn: activeCalories,
+        days_logged: daysLogged,
+        net_calories: netCalories,
+        status: netCalories > 0 ? 'Surplus' : 'Deficit'
+      });
+    } catch (err) {
+      console.error('Error generating all-time summary:', err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
 
   server.get('**', express.static(browserDistFolder, {
     maxAge: '1y',
