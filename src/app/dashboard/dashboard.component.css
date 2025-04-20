@@ -1,82 +1,175 @@
-.dashboard-container {
-  max-width: 600px;
-  margin: 40px auto;
+.dashboard-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* NEW: Wrap both containers */
-.main-dashboard {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 20px;
+.header-section {
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-/* Override margin:auto for left alignment in flex */
-.dashboard-container {
-  margin: 0;
+.header-section h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #333;
 }
 
-/* NEW: Right-side container */
-.right-container {
-  max-width: 400px;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.card {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-  margin-bottom: 30px;
-}
-
-select, input {
-  width: 95%;
-  padding: 10px;
-  margin-top: 6px;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.logs .log {
+.summary-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.toggle-switch {
+  display: flex;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.toggle-switch button {
+  padding: 8px 14px;
+  border: none;
+  background: none;
+  font-weight: 600;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-switch button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.toggle-switch button:not(.active):hover {
+  background-color: #dcdcdc;
+}
+
+.summary-card h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #222;
+}
+
+.summary-card {
+  background: #e9f3ff;
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+
+.summary-card p {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+.summary-card strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+
+.form-row, .logs-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.form-card, .log-section {
+  flex: 1;
+  min-width: 350px;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
   margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.log {
   background-color: #eef3ff;
   border-left: 4px solid #007bff;
-  border-radius: 6px;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .delete-button {
   background-color: #dc3545;
-  color: #fff;
+  color: white;
   border: none;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 6px;
+  padding: 6px 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  margin-top: 8px;
 }
 
 .delete-button:hover {
-  background-color: #b02a37;
+  background-color: #a52834;
+}
+
+.profile {
+  margin-top: 30px;
+  background-color: #343a40;
+}
+
+/* Nutritionix styles override */
+app-nutritionix-search input[type="text"],
+app-nutritionix-search input[type="number"],
+app-nutritionix-search select {
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin: 10px 0;
+  box-sizing: border-box;
+}
+
+app-nutritionix-search h2,
+app-nutritionix-search .form-header {
+  font-size: 1.25rem;
+  margin-bottom: 16px;
+  font-weight: bold;
+  text-align: left;
+  color: #333;
 }
