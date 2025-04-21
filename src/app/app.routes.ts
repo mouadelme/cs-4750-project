@@ -12,4 +12,5 @@ export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent },
     { path: 'landing', component: LandingComponent},
     { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: '**', redirectTo: 'login'},
 ];

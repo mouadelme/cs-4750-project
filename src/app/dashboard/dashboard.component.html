@@ -22,11 +22,12 @@
         <span *ngIf="summary.date">({{ summary.date }})</span>
       </h3>
     </div>
-  
-    <p>Calories Consumed: {{ summary.calories_consumed }}</p>
-    <p>Calories Burned: {{ summary.calories_burned }}</p>
-    <p *ngIf="summary.resting_burn">Resting Burn: {{ summary.resting_burn }}</p>
-    <p *ngIf="summary.active_burn">Active Burn: {{ summary.active_burn }}</p>
+    <div class="summary-metrics">
+      <p>Calories Consumed: {{ summary.calories_consumed }}</p>
+      <p>Calories Burned: {{ summary.calories_burned }}</p>
+      <p *ngIf="summary.resting_burn">Resting Burn: {{ summary.resting_burn }}</p>
+      <p *ngIf="summary.active_burn">Active Burn: {{ summary.active_burn }}</p>
+    </div>  
     <p class="summary-net" [ngClass]="summary.status === 'Surplus' ? 'surplus' : 'deficit'">
       <strong>Net: {{ summary.net_calories }} ({{ summary.status }})</strong>
     </p>    
@@ -53,7 +54,7 @@
 
     <!-- Right: Food Input -->
     <div class="form-card">
-      <app-nutritionix-search></app-nutritionix-search>
+      <app-nutritionix-search (foodLogged)="loadFoodLogs(); loadSummary()"></app-nutritionix-search>
     </div>
   </div>
 
