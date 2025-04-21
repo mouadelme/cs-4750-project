@@ -1,27 +1,9 @@
 <div class="profile-container">
   <div *ngIf="loading" class="loading">Loading profile data...</div>
 
-  <!-- Profile Information Display -->
-  <div *ngIf="hasExistingProfile && !showEditForm" class="profile-info">
-    <h2>Your Profile</h2>
-    <div class="profile-details">
-      <p><strong>Name:</strong> {{ profile.fname }} {{ profile.lname }}</p>
-      <p><strong>Age:</strong> {{ profile.age }}</p>
-      <p><strong>Gender:</strong> {{ profile.gender }}</p>
-      <p><strong>Weight:</strong> {{ profile.weight }} lbs</p>
-      <p>
-        <strong>Height:</strong> {{ profile.height_ft }}'
-        {{ profile.height_in }}"
-      </p>
-    </div>
-    <button class="update-button" (click)="toggleEditForm()">
-      Update Information
-    </button>
-  </div>
-
-  <!-- Profile Edit Form -->
-  <div *ngIf="showEditForm || !hasExistingProfile">
-    <h2>{{ hasExistingProfile ? "Update" : "Enter" }} your information:</h2>
+  <ng-container *ngIf="!loading">
+    <h2>{{ hasExistingProfile ? "Your Profile" : "Enter your information:" }}</h2>
+    
     <form
       class="profile-form"
       (ngSubmit)="submitInfo()"
@@ -35,6 +17,7 @@
         [(ngModel)]="profile.fname"
         placeholder="First name"
         required
+        [readonly]="hasExistingProfile && !showEditForm"
       />
       <input
         type="text"
@@ -42,6 +25,7 @@
         [(ngModel)]="profile.lname"
         placeholder="Last name"
         required
+        [readonly]="hasExistingProfile && !showEditForm"
       />
       <input
         type="number"
@@ -50,9 +34,15 @@
         placeholder="Age"
         min="1"
         required
+        [readonly]="hasExistingProfile && !showEditForm"
       />
-      <select name="gender" [(ngModel)]="profile.gender" required>
-        <option value="" disabled selected>Gender</option>
+      <select
+        name="gender"
+        [(ngModel)]="profile.gender"
+        [disabled]="hasExistingProfile && !showEditForm"
+        required
+      >
+        <option value="" disabled>Gender</option>
         <option value="male">Male</option>
         <option value="female">Female</option>
         <option value="other">Other</option>
@@ -64,6 +54,7 @@
         placeholder="Weight (lbs)"
         min="1"
         required
+        [readonly]="hasExistingProfile && !showEditForm"
       />
       <input
         type="number"
@@ -72,6 +63,7 @@
         placeholder="Height (ft)"
         min="1"
         required
+        [readonly]="hasExistingProfile && !showEditForm"
       />
       <input
         type="number"
@@ -81,9 +73,11 @@
         min="0"
         max="11"
         required
+        [readonly]="hasExistingProfile && !showEditForm"
       />
 
-      <div class="form-buttons">
+      <!-- Buttons -->
+      <div class="form-buttons" *ngIf="!hasExistingProfile || showEditForm">
         <button type="submit">
           {{ hasExistingProfile ? "Save Changes" : "Create Profile" }}
         </button>
@@ -96,6 +90,16 @@
           Cancel
         </button>
       </div>
+
+      <!-- Show edit button when viewing only -->
+      <button
+        class="update-button"
+        type="button"
+        *ngIf="hasExistingProfile && !showEditForm"
+        (click)="toggleEditForm()"
+      >
+        Update Information
+      </button>
     </form>
-  </div>
+  </ng-container>
 </div>

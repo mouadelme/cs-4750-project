@@ -128,3 +128,11 @@
 .form-buttons button {
   flex: 1;
 }
+
+input[readonly], select:disabled {
+  background-color: #f8f8f8;
+  color: #333;
+  cursor: default;
+  pointer-events: none;
+  border: 1px solid #ccc;
+}

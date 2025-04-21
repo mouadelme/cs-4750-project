@@ -1,5 +1,5 @@
 // nutritionix-search.component.ts
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../auth.service';
@@ -34,6 +34,8 @@ export class NutritionixSearchComponent implements OnInit {
 
   username: string = '';
 
+  @Output() foodLogged = new EventEmitter<void>();
+
   ngOnInit() {
     axios.get('/api/current-user', { withCredentials: true })
       .then(res => {
@@ -52,7 +54,6 @@ logFood() {
   console.log('Result:', this.result);
   console.log('Selected Meal:', this.selectedMeal);
   console.log('Servings:', this.servings);
-  //console.log('Username:', this.username);
 
   if (!this.result || !this.selectedMeal || !this.servings || !this.username) {
     alert("Missing required information.");
@@ -72,15 +73,16 @@ logFood() {
   };
 
   axios.post('/api/log-food', foodData, { withCredentials: true })
-    .then(() => alert('Food logged successfully!'))
+    .then(() => {
+      alert('Food logged successfully!');
+      this.foodLogged.emit();
+    })
     .catch(error => {
       console.error('Error logging food:', error);
       alert('Failed to log food.');
     });
 }
 
-
-  
 
   async searchFood() {
     this.loading = true;
