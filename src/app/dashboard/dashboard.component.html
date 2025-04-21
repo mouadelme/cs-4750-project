@@ -27,9 +27,9 @@
     <p>Calories Burned: {{ summary.calories_burned }}</p>
     <p *ngIf="summary.resting_burn">Resting Burn: {{ summary.resting_burn }}</p>
     <p *ngIf="summary.active_burn">Active Burn: {{ summary.active_burn }}</p>
-    <p>
+    <p class="summary-net" [ngClass]="summary.status === 'Surplus' ? 'surplus' : 'deficit'">
       <strong>Net: {{ summary.net_calories }} ({{ summary.status }})</strong>
-    </p>
+    </p>    
   </div>
   
 

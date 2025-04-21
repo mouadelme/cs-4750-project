@@ -353,7 +353,8 @@ export function app(): express.Express {
   
   server.get('/api/summary/:username/today', async (req, res) => {
     const { username } = req.params;
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA'); 
+
   
     try {
       const profileRes = await pool.query(
