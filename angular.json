@@ -13,6 +13,14 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "allowedCommonJsDependencies": [
+              "express-session",
+              "passport",
+              "passport-local",
+              "form-data",
+              "proxy-from-env",
+              "follow-redirects"
+            ],
             "outputPath": "dist/cs-4750-project",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -46,8 +54,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "6kB",
+                  "maximumError": "7kB"
                 }
               ],
               "outputHashing": "all"

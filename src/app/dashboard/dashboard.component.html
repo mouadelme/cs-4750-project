@@ -17,10 +17,15 @@
           All-Time
         </button>
       </div>
-      <h3>
-        {{ summary.timeframe || 'Daily Summary' }}
-        <span *ngIf="summary.date">({{ summary.date }})</span>
-      </h3>
+      <div class="summary-heading-center">
+        <h3>
+          {{ summary?.timeframe || 'Daily Summary' }}
+          <span *ngIf="summary?.date">({{ summary.date }})</span>
+        </h3>
+      </div>
+      <button class="expand-summary" (click)="openSummaryModal()" aria-label="Expand Summary">
+        ↗
+      </button>
     </div>
     <div class="summary-metrics">
       <p>Calories Consumed: {{ summary.calories_consumed }}</p>
@@ -32,7 +37,39 @@
       <strong>Net: {{ summary.net_calories }} ({{ summary.status }})</strong>
     </p>    
   </div>
+
+  <div class="modal-backdrop" *ngIf="showSummaryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Detailed Summary — {{ summary.date }}</h2>
+        <button class="close-btn" (click)="closeSummaryModal()">✖</button>
+      </div>
   
+      <div class="modal-section">
+        <h3>Nutritional Summary</h3>
+        <p><strong>Total Calories Consumed:</strong> {{ summary.calories_consumed }} cal</p>
+        <div class="badge-section">
+          <span class="summary-badge protein">Total Protein: {{ nutritionTotals.protein }} g</span>
+          <span class="summary-badge carbs">Total Carbs: {{ nutritionTotals.carbs }} g</span>
+          <span class="summary-badge fat">Total Fat: {{ nutritionTotals.fat }} g</span>
+        </div>
+      </div>
+  
+      <div class="modal-section">
+        <h3>Exercise Summary</h3>
+        <p><strong>Total Calories Burned:</strong> {{ summary.calories_burned }} cal</p>
+        <p><strong>Resting Burn:</strong> {{ summary.resting_burn }} cal</p>
+        <p><strong>Active Burn:</strong> {{ summary.active_burn }} cal</p>
+        <p><strong>Total Minutes Worked Out:</strong> {{ totalWorkoutMinutes }} min</p>
+  
+        <div class="exercise-breakdown-pills">
+          <span *ngFor="let ex of exerciseBreakdown" class="summary-badge exercise">
+            {{ ex.type }} – {{ ex.duration }} min, {{ ex.calories }} cal
+          </span>
+        </div>        
+      </div>
+    </div>
+  </div>
 
   <!-- Forms Row -->
   <div class="form-row">

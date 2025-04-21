@@ -32,7 +32,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
   margin-bottom: 20px;
+}
+
+.summary-heading-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #222;
+  pointer-events: none; 
 }
 
 .toggle-switch button {
@@ -195,4 +207,170 @@ app-nutritionix-search .form-header {
   font-weight: bold;
   text-align: left;
   color: #333;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 92%;
+  max-width: 650px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  animation: popIn 0.25s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.close-btn {
+  background: transparent;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.close-btn:hover {
+  color: #e21111;
+}
+
+.modal-section {
+  margin-bottom: 28px;
+}
+
+.modal-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1f2937;
+  border-left: 4px solid #007bff;
+  padding-left: 10px;
+}
+
+.modal-section p {
+  font-size: 1rem;
+  margin: 6px 0;
+  color: #374151;
+}
+
+.modal-section strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.exercise-breakdown {
+  list-style-type: disc;
+  margin-left: 22px;
+  padding-left: 5px;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.exercise-breakdown li {
+  margin: 4px 0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-section {
+  margin-top: 20px;
+}
+
+.exercise-breakdown {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.badge-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0 20px;
+}
+
+.summary-badge {
+  padding: 6px 14px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: #eaf0ff;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  white-space: nowrap;
+}
+
+.summary-badge.protein {
+  background-color: #e6f4f1;
+  color: #157347;
+}
+
+.summary-badge.carbs {
+  background-color: #f0f4ff;
+  color: #1d4ed8;
+}
+
+.summary-badge.fat {
+  background-color: #fff4e5;
+  color: #b45309;
+}
+
+.exercise-breakdown-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.summary-badge.exercise {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
 }
