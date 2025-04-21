@@ -15,7 +15,7 @@ function calculateBMR(gender: string, weight: number, height_ft: number, height_
   } else if (gender === 'female') {
     return Math.round(10 * weight_kg + 6.25 * height_cm - 5 * age - 161);
   } else {
-    return Math.round(10 * weight_kg + 6.25 * height_cm - 5 * age); // Neutral
+    return Math.round(10 * weight_kg + 6.25 * height_cm - 5 * age); 
   }
 }
 
@@ -35,9 +35,23 @@ export class DashboardComponent implements OnInit {
   exerciseLogs: any[] = [];
   caloriesBurned = null;
   foodLogs: any[] = [];
-  summary: any;
   bmr: any;
   summaryType: 'daily' | 'all-time' = 'daily';
+  showSummaryModal = false;
+  nutritionTotals = { protein: 0, carbs: 0, fat: 0 };
+  totalWorkoutMinutes = 0;
+  exerciseBreakdown: { type: string, duration: number, calories: number }[] = [];
+  summary: any = {
+    timeframe: '',
+    date: '',
+    calories_consumed: 0,
+    calories_burned: 0,
+    resting_burn: 0,
+    active_burn: 0,
+    net_calories: 0,
+    status: ''
+  };
+  
 
   constructor(
     private exerciseService: ExerciseService,
@@ -48,7 +62,13 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-    this.username = user?.username;
+    
+    if (!user?.username) {
+      console.error('User not logged in');
+      return;
+    }
+
+    this.username = user.username;
 
     this.http.get<any>(`/api/profile`).subscribe(profile => {
       const { gender, weight, height_ft, height_in, age } = profile;
@@ -130,7 +150,7 @@ export class DashboardComponent implements OnInit {
       ? `/api/summary/${this.username}/today`
       : `/api/summary/${this.username}/all-time`;
 
-    this.http.get(endpoint).subscribe({
+    this.http.get(endpoint, { withCredentials: true }).subscribe({
       next: (data) => this.summary = data,
       error: (err) => console.error('Failed to load summary:', err)
     });
@@ -140,7 +160,53 @@ export class DashboardComponent implements OnInit {
     this.summaryType = type;
     this.loadSummary();
   }
+
+  openSummaryModal() {
+    this.calculateNutritionTotals();
+    this.calculateExerciseBreakdown();
+    this.showSummaryModal = true;
+  }
+
+  closeSummaryModal() {
+    this.showSummaryModal = false;
+  }
+
+  calculateNutritionTotals() {
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    this.nutritionTotals = this.foodLogs.reduce((acc, food) => {
+      const logDate = new Date(food.date).toISOString().split('T')[0];
+      if (logDate === todayStr) {
+        acc.protein += Number(food.protein) || 0;
+        acc.carbs += Number(food.carbs) || 0;
+        acc.fat += Number(food.fat) || 0;
+      }
+      return acc;
+    }, { protein: 0, carbs: 0, fat: 0 });
   
+    this.nutritionTotals.protein = Math.round(this.nutritionTotals.protein * 10) / 10;
+    this.nutritionTotals.carbs = Math.round(this.nutritionTotals.carbs * 10) / 10;
+    this.nutritionTotals.fat = Math.round(this.nutritionTotals.fat * 10) / 10;
+  }
+  
+  calculateExerciseBreakdown() {
+    const breakdownMap: { [key: string]: { duration: number, calories: number } } = {};
+
+    this.totalWorkoutMinutes = 0;
+
+    for (const log of this.logs) {
+      if (!breakdownMap[log.exercise_description]) {
+        breakdownMap[log.exercise_description] = { duration: 0, calories: 0 };
+      }
+      breakdownMap[log.exercise_description].duration += log.duration_min || 0;
+      breakdownMap[log.exercise_description].calories += log.calories_burned || 0;
+      this.totalWorkoutMinutes += log.duration_min || 0;
+    }
+
+    this.exerciseBreakdown = Object.entries(breakdownMap).map(([type, data]) => ({
+      type, ...data
+    }));
+  }
 
   profile() {
     this.router.navigate(['/profile']);

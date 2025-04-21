@@ -69,8 +69,8 @@ export function app(): express.Express {
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // Set to true if using HTTPS
-      maxAge: 1000 * 60 * 60, // 1 hour
+      secure: false, 
+      maxAge: 1000 * 60 * 60, 
     },
   }));
 
@@ -154,7 +154,6 @@ export function app(): express.Express {
     })(req, res, next);
   });
 
-
   server.get('/api/exercises', async (req, res) => {
     try {
       const exercisesResult = await pool.query(
@@ -167,7 +166,6 @@ export function app(): express.Express {
 
     }
   });
-
 
   server.post('/api/log-exercise', async (req, res) => {
     const { exercise_id, duration_min, calories_burned, username } = req.body;
@@ -195,7 +193,7 @@ export function app(): express.Express {
     try {
       const result = await pool.query(`
         SELECT el.exercise_log_id, el.duration_min, el.exercise_date,
-               e.exercise_type, e.exercise_description
+               e.exercise_type, e.exercise_description, el.calories_burned
         FROM exercise_log el
         JOIN exercise e ON el.exercise_id = e.exercise_id
         WHERE el.username = $1
@@ -385,8 +383,8 @@ export function app(): express.Express {
         [username, today]
       );
   
-      const caloriesConsumed = parseFloat(foodRes.rows[0].total_consumed);
-      const activeCalories = parseFloat(exerciseRes.rows[0].total_burned);
+      const caloriesConsumed = parseFloat(foodRes.rows[0].total_consumed) || 0;
+      const activeCalories = parseFloat(exerciseRes.rows[0].total_burned) || 0;
       const totalCaloriesBurned = activeCalories + bmr;
       const netCalories = caloriesConsumed - totalCaloriesBurned;
   
@@ -397,7 +395,7 @@ export function app(): express.Express {
         net_calories: netCalories,
         resting_burn: bmr,
         active_burn: activeCalories,
-        status: netCalories > 0 ? 'Surplus' : 'Deficit'
+        status: netCalories >= 0 ? 'Surplus' : 'Deficit'
       });
     } catch (err) {
       console.error('Error generating summary:', err);
