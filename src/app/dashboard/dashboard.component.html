@@ -19,23 +19,32 @@
       </div>
       <div class="summary-heading-center">
         <h3>
-          {{ summary?.timeframe || 'Daily Summary' }}
+          {{ summary?.timeframe || "Daily Summary" }}
           <span *ngIf="summary?.date">({{ summary.date }})</span>
         </h3>
       </div>
-      <button class="expand-summary" (click)="openSummaryModal()" aria-label="Expand Summary">
+      <button
+        class="expand-summary"
+        (click)="openSummaryModal()"
+        aria-label="Expand Summary"
+      >
         ↗
       </button>
     </div>
     <div class="summary-metrics">
       <p>Calories Consumed: {{ summary.calories_consumed }}</p>
       <p>Calories Burned: {{ summary.calories_burned }}</p>
-      <p *ngIf="summary.resting_burn">Resting Burn: {{ summary.resting_burn }}</p>
+      <p *ngIf="summary.resting_burn">
+        Resting Burn: {{ summary.resting_burn }}
+      </p>
       <p *ngIf="summary.active_burn">Active Burn: {{ summary.active_burn }}</p>
-    </div>  
-    <p class="summary-net" [ngClass]="summary.status === 'Surplus' ? 'surplus' : 'deficit'">
+    </div>
+    <p
+      class="summary-net"
+      [ngClass]="summary.status === 'Surplus' ? 'surplus' : 'deficit'"
+    >
       <strong>Net: {{ summary.net_calories }} ({{ summary.status }})</strong>
-    </p>    
+    </p>
   </div>
 
   <div class="modal-backdrop" *ngIf="showSummaryModal">
@@ -44,29 +53,47 @@
         <h2>Detailed Summary — {{ summary.date }}</h2>
         <button class="close-btn" (click)="closeSummaryModal()">✖</button>
       </div>
-  
+
       <div class="modal-section">
         <h3>Nutritional Summary</h3>
-        <p><strong>Total Calories Consumed:</strong> {{ summary.calories_consumed }} cal</p>
+        <p>
+          <strong>Total Calories Consumed:</strong>
+          {{ summary.calories_consumed }} cal
+        </p>
         <div class="badge-section">
-          <span class="summary-badge protein">Total Protein: {{ nutritionTotals.protein }} g</span>
-          <span class="summary-badge carbs">Total Carbs: {{ nutritionTotals.carbs }} g</span>
-          <span class="summary-badge fat">Total Fat: {{ nutritionTotals.fat }} g</span>
+          <span class="summary-badge protein"
+            >Total Protein: {{ nutritionTotals.protein }} g</span
+          >
+          <span class="summary-badge carbs"
+            >Total Carbs: {{ nutritionTotals.carbs }} g</span
+          >
+          <span class="summary-badge fat"
+            >Total Fat: {{ nutritionTotals.fat }} g</span
+          >
         </div>
       </div>
-  
+
       <div class="modal-section">
         <h3>Exercise Summary</h3>
-        <p><strong>Total Calories Burned:</strong> {{ summary.calories_burned }} cal</p>
+        <p>
+          <strong>Total Calories Burned:</strong>
+          {{ summary.calories_burned }} cal
+        </p>
         <p><strong>Resting Burn:</strong> {{ summary.resting_burn }} cal</p>
         <p><strong>Active Burn:</strong> {{ summary.active_burn }} cal</p>
-        <p><strong>Total Minutes Worked Out:</strong> {{ totalWorkoutMinutes }} min</p>
-  
+        <p>
+          <strong>Total Minutes Worked Out:</strong>
+          {{ totalWorkoutMinutes }} min
+        </p>
+
         <div class="exercise-breakdown-pills">
-          <span *ngFor="let ex of exerciseBreakdown" class="summary-badge exercise">
+          <span
+            *ngFor="let ex of exerciseBreakdown"
+            class="summary-badge exercise"
+          >
             {{ ex.type }} – {{ ex.duration }} min, {{ ex.calories }} cal
           </span>
-        </div>        
+        </div>
       </div>
     </div>
   </div>
@@ -76,22 +103,38 @@
     <!-- Left: Exercise Input -->
     <div class="form-card">
       <h4>Log Exercise</h4>
+      <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
       <label>Select Exercise</label>
       <select [(ngModel)]="selectedExercise">
-        <option *ngFor="let exercise of exercises" [value]="exercise.exercise_id">
+        <option
+          *ngFor="let exercise of exercises"
+          [value]="exercise.exercise_id"
+        >
           {{ exercise.exercise_description }} ({{ exercise.exercise_type }})
         </option>
       </select>
       <label>Duration (minutes)</label>
-      <input type="number" [(ngModel)]="duration" placeholder="e.g. 30" min="1" />
+      <input
+        type="number"
+        [(ngModel)]="duration"
+        placeholder="e.g. 30"
+        min="1"
+      />
       <label>Calories Burned</label>
-      <input type="number" [(ngModel)]="caloriesBurned" placeholder="e.g. 250" min="1" />
+      <input
+        type="number"
+        [(ngModel)]="caloriesBurned"
+        placeholder="e.g. 250"
+        min="1"
+      />
       <button (click)="logExercise()">Log Exercise</button>
     </div>
 
     <!-- Right: Food Input -->
     <div class="form-card">
-      <app-nutritionix-search (foodLogged)="loadFoodLogs(); loadSummary()"></app-nutritionix-search>
+      <app-nutritionix-search
+        (foodLogged)="loadFoodLogs(); loadSummary()"
+      ></app-nutritionix-search>
     </div>
   </div>
 
@@ -101,9 +144,12 @@
     <div class="log-section">
       <h4>Your Exercise Logs</h4>
       <div class="log" *ngFor="let log of logs">
-        <strong>{{ log.exercise_type }}</strong> {{ log.exercise_description }} <br />
-        {{ log.duration_min }} min on {{ log.exercise_date | date: 'medium' }}
-        <button class="delete-button" (click)="deleteLog(log.exercise_log_id)">x</button>
+        <strong>{{ log.exercise_type }}</strong> {{ log.exercise_description }}
+        <br />
+        {{ log.duration_min }} min on {{ log.exercise_date | date : "medium" }}
+        <button class="delete-button" (click)="deleteLog(log.exercise_log_id)">
+          x
+        </button>
       </div>
     </div>
 
@@ -111,12 +157,14 @@
     <div class="log-section">
       <h4>Your Food Logs</h4>
       <div class="log" *ngFor="let food of foodLogs">
-        <strong>{{ food.food_name }}</strong> ({{ food.meal_type }}) <br>
-        {{ food.quantity }} serving(s), {{ food.calories }} cal — 
-        P: {{ food.protein }}g, F: {{ food.fat }}g, C: {{ food.carbs }}g <br>
-        Logged on: {{ food.date | date:'medium' }}
-        <button class="delete-button" (click)="deleteFoodLog(food.meal_id)">x</button>
-      </div>      
+        <strong>{{ food.food_name }}</strong> ({{ food.meal_type }}) <br />
+        {{ food.quantity }} serving(s), {{ food.calories }} cal — P:
+        {{ food.protein }}g, F: {{ food.fat }}g, C: {{ food.carbs }}g <br />
+        Logged on: {{ food.date | date : "medium" }}
+        <button class="delete-button" (click)="deleteFoodLog(food.meal_id)">
+          x
+        </button>
+      </div>
     </div>
   </div>
 

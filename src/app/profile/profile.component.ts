@@ -108,7 +108,6 @@ export class ProfileComponent implements OnInit {
       next: () => {
         this.hasExistingProfile = true;
         this.showEditForm = false; // Hide form after successful save
-        alert('Profile saved successfully!');
       },
       error: (err: any) => {
         console.error('Error saving profile:', err);

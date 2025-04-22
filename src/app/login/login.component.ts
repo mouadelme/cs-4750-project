@@ -35,6 +35,8 @@ export class LoginComponent {
       this.register();
     }
   }
+  errorMessage: string | null = null;
+
 
   login() {
     this.http.post('/api/login', {
@@ -48,9 +50,9 @@ export class LoginComponent {
       },
       error: err => {
         if (err.status === 401) {
-          alert("Incorrect credentials. Please try again.");
+          this.errorMessage = 'Incorrect credentials. Please try again.';
         } else {
-          alert("Login failed. Please check your credentials and try again.");
+          this.errorMessage = 'Login failed. Please check your credentials and try again.';
         }
         console.error('Login failed', err);
       }
@@ -59,7 +61,7 @@ export class LoginComponent {
 
   register() {
     if (this.registerPassword !== this.registerConfirmPassword) {
-      alert('Passwords do not match!');
+      this.errorMessage ='Passwords do not match!';
       return;
     }
     this.http.post('/api/register', {
@@ -76,9 +78,9 @@ export class LoginComponent {
       },
       error: err => {
         if (err.status === 409) {
-          alert("Username already exists. Please log in instead.");
+          this.errorMessage = 'Username already exists. Please log in instead.';
         } else {
-          alert("Registration failed. Please try again later.");
+          this.errorMessage = 'Registration failed. Please try again later.';
         }
         console.error('Registration failed', err);
       }

@@ -51,6 +51,8 @@ export class DashboardComponent implements OnInit {
     net_calories: 0,
     status: ''
   };
+
+  errorMessage: string | null = null;
   
 
   constructor(
@@ -86,9 +88,11 @@ export class DashboardComponent implements OnInit {
 
   logExercise() {
     if (!this.selectedExercise || !this.duration || !this.caloriesBurned) {
-      alert('Please fill in all required fields.');
+      this.errorMessage = 'Please fill in all required fields.';
       return;
     }
+
+    this.errorMessage = null;
     
     const payload = {
       exercise_id: this.selectedExercise,
@@ -119,7 +123,6 @@ export class DashboardComponent implements OnInit {
       },
       error: err => {
         console.error('Failed to delete log:', err);
-        alert('Could not delete log. Please try again.');
       }
     });
     this.loadSummary();
@@ -133,7 +136,6 @@ export class DashboardComponent implements OnInit {
       },
       error: err => {
         console.error('Failed to delete food log:', err);
-        alert('Could not delete food log. Please try again.');
       }
     });
   }

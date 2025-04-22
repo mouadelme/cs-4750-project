@@ -374,3 +374,14 @@ app-nutritionix-search .form-header {
   color: #1f2937;
   border: 1px solid #d1d5db;
 }
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+}

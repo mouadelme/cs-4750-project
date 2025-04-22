@@ -83,4 +83,13 @@
     font-size: 14px;
     text-align: center;
   }
+
+  .error-message {
+    color: #dc3545;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+    text-align: center;
+    font-weight: 500;
+  }
   

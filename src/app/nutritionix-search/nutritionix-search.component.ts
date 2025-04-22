@@ -33,6 +33,8 @@ export class NutritionixSearchComponent implements OnInit {
   private appKey = '3426137af00a32d5719868a2f7f8966b';
 
   username: string = '';
+  errorMessage: string | null = null;
+
 
   @Output() foodLogged = new EventEmitter<void>();
 
@@ -56,10 +58,10 @@ logFood() {
   console.log('Servings:', this.servings);
 
   if (!this.result || !this.selectedMeal || !this.servings || !this.username) {
-    alert("Missing required information.");
+    this.errorMessage = 'Please fill in all required fields.';
     return;
   }
-
+  this.errorMessage = null;
 
   const foodData = {
     username: this.username,
@@ -74,12 +76,10 @@ logFood() {
 
   axios.post('/api/log-food', foodData, { withCredentials: true })
     .then(() => {
-      alert('Food logged successfully!');
       this.foodLogged.emit();
     })
     .catch(error => {
       console.error('Error logging food:', error);
-      alert('Failed to log food.');
     });
 }
 
