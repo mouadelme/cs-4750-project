@@ -172,11 +172,20 @@ export class DashboardComponent implements OnInit {
   }
 
   calculateNutritionTotals() {
-    const todayStr = new Date().toISOString().split('T')[0];
-
+    const now = new Date();
+    const today = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  
+    const estStartOfDay = new Date(today);
+    estStartOfDay.setHours(0, 0, 0, 0);
+  
+    const estEndOfDay = new Date(today);
+    estEndOfDay.setHours(23, 59, 59, 999);
+  
     this.nutritionTotals = this.foodLogs.reduce((acc, food) => {
-      const logDate = new Date(food.date).toISOString().split('T')[0];
-      if (logDate === todayStr) {
+      const foodDate = new Date(food.date);
+      const foodEST = new Date(foodDate.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  
+      if (foodEST >= estStartOfDay && foodEST <= estEndOfDay) {
         acc.protein += Number(food.protein) || 0;
         acc.carbs += Number(food.carbs) || 0;
         acc.fat += Number(food.fat) || 0;
@@ -190,24 +199,37 @@ export class DashboardComponent implements OnInit {
   }
   
   calculateExerciseBreakdown() {
+    const now = new Date();
+    const today = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  
+    const estStartOfDay = new Date(today);
+    estStartOfDay.setHours(0, 0, 0, 0);
+  
+    const estEndOfDay = new Date(today);
+    estEndOfDay.setHours(23, 59, 59, 999);
+  
     const breakdownMap: { [key: string]: { duration: number, calories: number } } = {};
-
     this.totalWorkoutMinutes = 0;
-
+  
     for (const log of this.logs) {
-      if (!breakdownMap[log.exercise_description]) {
-        breakdownMap[log.exercise_description] = { duration: 0, calories: 0 };
+      const logDate = new Date(log.exercise_date);
+      const logEST = new Date(logDate.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  
+      if (logEST >= estStartOfDay && logEST <= estEndOfDay) {
+        if (!breakdownMap[log.exercise_description]) {
+          breakdownMap[log.exercise_description] = { duration: 0, calories: 0 };
+        }
+        breakdownMap[log.exercise_description].duration += log.duration_min || 0;
+        breakdownMap[log.exercise_description].calories += log.calories_burned || 0;
+        this.totalWorkoutMinutes += log.duration_min || 0;
       }
-      breakdownMap[log.exercise_description].duration += log.duration_min || 0;
-      breakdownMap[log.exercise_description].calories += log.calories_burned || 0;
-      this.totalWorkoutMinutes += log.duration_min || 0;
     }
-
+  
     this.exerciseBreakdown = Object.entries(breakdownMap).map(([type, data]) => ({
       type, ...data
     }));
   }
-
+  
   profile() {
     this.router.navigate(['/profile']);
   }
