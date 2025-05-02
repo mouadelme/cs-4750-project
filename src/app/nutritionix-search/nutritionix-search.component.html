@@ -1,0 +1,53 @@
+<div class="nutritionix-search">
+  <h4 class="form-header">Log Meal</h4>
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <label for="foodName" class="form-label">Food Name</label>
+  <input
+    id="foodName"
+    type="text"
+    [(ngModel)]="foodName"
+    placeholder="Enter food name"
+    class="form-input"
+  />
+  <button
+    class="form-button"
+    (click)="searchFood()"
+    [disabled]="loading || !foodName.trim()"
+  >
+    Search
+  </button>
+
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="result" class="result">
+    <h3>{{ result.food_name }}</h3>
+    <p>
+      <strong>Serving Size:</strong> {{ result.serving_qty }}
+      {{ result.serving_unit }}
+    </p>
+    <p><strong>Calories:</strong> {{ result.nf_calories }}</p>
+    <p><strong>Protein:</strong> {{ result.nf_protein }}g</p>
+    <p><strong>Carbohydrates:</strong> {{ result.nf_total_carbohydrate }}g</p>
+    <p><strong>Fat:</strong> {{ result.nf_total_fat }}g</p>
+  </div>
+
+  <label for="mealType" class="form-label">Select Meal Type</label>
+  <select id="mealType" [(ngModel)]="selectedMeal" class="form-input">
+    <option value="" disabled selected>Choose a meal</option>
+    <option *ngFor="let meal of mealTypes" [value]="meal">{{ meal }}</option>
+  </select>
+
+  <label for="servings" class="form-label">Servings</label>
+  <input
+    id="servings"
+    type="number"
+    min="1"
+    step="1"
+    [(ngModel)]="servings"
+    placeholder="e.g. 1, 1.5, 2"
+    class="form-input"
+  />
+
+  <button class="form-button" (click)="logFood()">Log Food</button>
+</div>

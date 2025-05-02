@@ -1,0 +1,140 @@
+<div class="profile-container">
+  <div *ngIf="loading" class="loading">Loading profile data...</div>
+
+  <ng-container *ngIf="!loading">
+    <h2>{{ hasExistingProfile ? "Your Profile" : "Enter your information:" }}</h2>
+    
+    <form
+      class="profile-form"
+      (ngSubmit)="submitInfo()"
+      #profileForm="ngForm"
+    >
+      <div *ngIf="error" class="error">{{ error }}</div>
+
+      <input
+        type="text"
+        name="fname"
+        [(ngModel)]="profile.fname"
+        placeholder="First name"
+        required
+        [readonly]="hasExistingProfile && !showEditForm"
+      />
+      <input
+        type="text"
+        name="lname"
+        [(ngModel)]="profile.lname"
+        placeholder="Last name"
+        required
+        [readonly]="hasExistingProfile && !showEditForm"
+      />
+      <input
+        type="number"
+        name="age"
+        [(ngModel)]="profile.age"
+        placeholder="Age"
+        min="1"
+        required
+        [readonly]="hasExistingProfile && !showEditForm"
+      />
+      <select
+        name="gender"
+        [(ngModel)]="profile.gender"
+        [disabled]="hasExistingProfile && !showEditForm"
+        required
+      >
+        <option value="" disabled>Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+      <input
+        type="number"
+        name="weight"
+        [(ngModel)]="profile.weight"
+        placeholder="Weight (lbs)"
+        min="1"
+        required
+        [readonly]="hasExistingProfile && !showEditForm"
+      />
+      <input
+        type="number"
+        name="height_ft"
+        [(ngModel)]="profile.height_ft"
+        placeholder="Height (ft)"
+        min="1"
+        required
+        [readonly]="hasExistingProfile && !showEditForm"
+      />
+      <input
+        type="number"
+        name="height_in"
+        [(ngModel)]="profile.height_in"
+        placeholder="Height (in)"
+        min="0"
+        max="11"
+        required
+        [readonly]="hasExistingProfile && !showEditForm"
+      />
+
+      <!-- Buttons -->
+      <div class="form-buttons" *ngIf="!hasExistingProfile || showEditForm">
+        <button type="submit">
+          {{ hasExistingProfile ? "Save Changes" : "Create Profile" }}
+        </button>
+        <button
+          type="button"
+          *ngIf="hasExistingProfile"
+          class="cancel-button"
+          (click)="toggleEditForm()"
+        >
+          Cancel
+        </button>
+      </div>
+
+      <!-- Show edit button when viewing only -->
+      <button
+        class="update-button"
+        type="button"
+        *ngIf="hasExistingProfile && !showEditForm"
+        (click)="toggleEditForm()"
+      >
+        Update Information
+      </button>
+    </form>
+  </ng-container>
+</div>
+
+<div class="password-container">
+  <h2>Update Password</h2>
+  <form
+    class="profile-form"
+    (ngSubmit)="changePassword()"
+    #passwordForm="ngForm"
+  >
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  
+    <input
+      type="password"
+      name="currentPassword"
+      [(ngModel)]="updatedPassword.currentPassword"
+      placeholder="Current Password"
+      required
+    />
+    <input
+      type="password"
+      name="newPassword"
+      [(ngModel)]="updatedPassword.newPassword"
+      placeholder="New Password"
+      required
+    />
+
+    <button
+      class="change-password"
+      type="submit"
+    >
+      Change Password
+    </button>
+  </form>
+</div>
+

@@ -1,0 +1,195 @@
+.profile-info {
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
+  border-radius: 0;
+  text-align: left;
+}
+
+.profile-info h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.profile-details p {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #444;
+}
+
+.profile-details strong {
+  color: #222;
+}
+
+.update-button, .change-password {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.update-button:hover {
+  background-color: #0056b3;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 30px 40px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-container h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profile-form input {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+}
+
+.profile-form input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.profile-form button {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 12px; 
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-form button:hover {
+  background-color: #0056b3;
+}
+
+.profile-form select {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+  appearance: none;
+  background-color: #fff;
+}
+
+.profile-form select:focus {
+  border-color: #007bff;
+  outline: none;
+} 
+
+.profile-form select:invalid {
+  color: #79838b;
+}
+
+.error {
+  color: #d93025;
+  font-size: 14px;
+  text-align: center;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-buttons button {
+  flex: 1;
+}
+
+input[readonly], select:disabled {
+  background-color: #f8f8f8;
+  color: #333;
+  cursor: default;
+  pointer-events: none;
+  border: 1px solid #ccc;
+}
+
+.password-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 30px 40px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+
+  h2 {
+    text-align: center;
+  }
+}
+
+/* Ensure password form inputs match profile form inputs */
+.password-container .profile-form input {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
+}
+
+.password-container .profile-form input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.password-container .profile-form button:hover {
+  background-color: #0056b3;
+}
+
+.success-message {
+  color: #2e7d32;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.error-message {
+  color: #dc3545;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.success-message, .error-message {
+  transition: opacity 0.3s ease-in-out;
+}
+
+

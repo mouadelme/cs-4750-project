@@ -1,0 +1,387 @@
+.dashboard-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.header-section {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.header-section h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.summary-card {
+  background-color: #eef4fe;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px 0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  color: #1a1a1a;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.summary-heading-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #222;
+  pointer-events: none; 
+}
+
+.toggle-switch button {
+  border: none;
+  padding: 8px 20px;
+  margin-right: 8px;
+  border-radius: 8px;
+  background-color: #d1d5db;
+  color: #111;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.toggle-switch button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.summary-metrics {
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.summary-card p {
+  margin: 6px 0;
+  font-size: 1rem;
+}
+
+.metric-row {
+  margin: 5px 0;
+}
+
+.summary-net {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  transition: color 0.3s ease;
+}
+
+.summary-net.deficit {
+  color: #dc3545;
+}
+
+.summary-net.surplus {
+  color: #28a745;
+}
+
+.summary-card h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #222;
+}
+
+.summary-card p {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+.summary-card strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+
+.form-row, .logs-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.form-card, .log-section {
+  flex: 1;
+  min-width: 350px;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  max-height: 500px;
+  overflow-y: auto;
+  font-weight: 600;
+  color: #333;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.log {
+  background-color: #eef3ff;
+  border-left: 4px solid #007bff;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.delete-button:hover {
+  background-color: #a52834;
+}
+
+.profile {
+  margin-top: 30px;
+  background-color: #343a40;
+}
+
+/* Nutritionix styles override */
+app-nutritionix-search input[type="text"],
+app-nutritionix-search input[type="number"],
+app-nutritionix-search select {
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin: 10px 0;
+  box-sizing: border-box;
+}
+
+app-nutritionix-search h2,
+app-nutritionix-search .form-header {
+  font-size: 1.25rem;
+  margin-bottom: 16px;
+  font-weight: bold;
+  text-align: left;
+  color: #333;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 92%;
+  max-width: 650px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  animation: popIn 0.25s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.close-btn {
+  background: transparent;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.close-btn:hover {
+  color: #e21111;
+}
+
+.modal-section {
+  margin-bottom: 28px;
+}
+
+.modal-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1f2937;
+  border-left: 4px solid #007bff;
+  padding-left: 10px;
+}
+
+.modal-section p {
+  font-size: 1rem;
+  margin: 6px 0;
+  color: #374151;
+}
+
+.modal-section strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.exercise-breakdown {
+  list-style-type: disc;
+  margin-left: 22px;
+  padding-left: 5px;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.exercise-breakdown li {
+  margin: 4px 0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-section {
+  margin-top: 20px;
+}
+
+.exercise-breakdown {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.badge-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0 20px;
+}
+
+.summary-badge {
+  padding: 6px 14px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: #eaf0ff;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  white-space: nowrap;
+}
+
+.summary-badge.protein {
+  background-color: #e6f4f1;
+  color: #157347;
+}
+
+.summary-badge.carbs {
+  background-color: #f0f4ff;
+  color: #1d4ed8;
+}
+
+.summary-badge.fat {
+  background-color: #fff4e5;
+  color: #b45309;
+}
+
+.exercise-breakdown-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.summary-badge.exercise {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+}
