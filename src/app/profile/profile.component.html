@@ -1,140 +1,72 @@
-<div class="profile-container">
-  <div *ngIf="loading" class="loading">Loading profile data...</div>
+<div class="profile-tab-group">
+  <mat-tab-group>
+    <!-- Profile info tab -->
+    <mat-tab label="Profile">
+      <div class="profile-section">
+        <h2 class="section-title">Your Profile</h2>
+        <form class="profile-form" (ngSubmit)="submitInfo()" #profileForm="ngForm">
+          <div *ngIf="error" class="error-message">{{ error }}</div>
 
-  <ng-container *ngIf="!loading">
-    <h2>{{ hasExistingProfile ? "Your Profile" : "Enter your information:" }}</h2>
-    
-    <form
-      class="profile-form"
-      (ngSubmit)="submitInfo()"
-      #profileForm="ngForm"
-    >
-      <div *ngIf="error" class="error">{{ error }}</div>
+          <label>First Name</label>
+          <input type="text" name="fname" [(ngModel)]="profile.fname" required [readonly]="hasExistingProfile && !showEditForm" />
 
-      <input
-        type="text"
-        name="fname"
-        [(ngModel)]="profile.fname"
-        placeholder="First name"
-        required
-        [readonly]="hasExistingProfile && !showEditForm"
-      />
-      <input
-        type="text"
-        name="lname"
-        [(ngModel)]="profile.lname"
-        placeholder="Last name"
-        required
-        [readonly]="hasExistingProfile && !showEditForm"
-      />
-      <input
-        type="number"
-        name="age"
-        [(ngModel)]="profile.age"
-        placeholder="Age"
-        min="1"
-        required
-        [readonly]="hasExistingProfile && !showEditForm"
-      />
-      <select
-        name="gender"
-        [(ngModel)]="profile.gender"
-        [disabled]="hasExistingProfile && !showEditForm"
-        required
-      >
-        <option value="" disabled>Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-      <input
-        type="number"
-        name="weight"
-        [(ngModel)]="profile.weight"
-        placeholder="Weight (lbs)"
-        min="1"
-        required
-        [readonly]="hasExistingProfile && !showEditForm"
-      />
-      <input
-        type="number"
-        name="height_ft"
-        [(ngModel)]="profile.height_ft"
-        placeholder="Height (ft)"
-        min="1"
-        required
-        [readonly]="hasExistingProfile && !showEditForm"
-      />
-      <input
-        type="number"
-        name="height_in"
-        [(ngModel)]="profile.height_in"
-        placeholder="Height (in)"
-        min="0"
-        max="11"
-        required
-        [readonly]="hasExistingProfile && !showEditForm"
-      />
+          <label>Last Name</label>
+          <input type="text" name="lname" [(ngModel)]="profile.lname" required [readonly]="hasExistingProfile && !showEditForm" />
 
-      <!-- Buttons -->
-      <div class="form-buttons" *ngIf="!hasExistingProfile || showEditForm">
-        <button type="submit">
-          {{ hasExistingProfile ? "Save Changes" : "Create Profile" }}
-        </button>
-        <button
-          type="button"
-          *ngIf="hasExistingProfile"
-          class="cancel-button"
-          (click)="toggleEditForm()"
-        >
-          Cancel
-        </button>
+          <label>Age</label>
+          <input type="number" name="age" [(ngModel)]="profile.age" min="1" required [readonly]="hasExistingProfile && !showEditForm" />
+
+          <label>Gender</label>
+          <select name="gender" [(ngModel)]="profile.gender" [disabled]="hasExistingProfile && !showEditForm" required>
+            <option value="" disabled>Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+
+          <label>Weight (lbs)</label>
+          <input type="number" name="weight" [(ngModel)]="profile.weight" min="1" required [readonly]="hasExistingProfile && !showEditForm" />
+
+          <label>Height (ft)</label>
+          <input type="number" name="height_ft" [(ngModel)]="profile.height_ft" min="1" required [readonly]="hasExistingProfile && !showEditForm" />
+
+          <label>Height (in)</label>
+          <input type="number" name="height_in" [(ngModel)]="profile.height_in" min="0" max="11" required [readonly]="hasExistingProfile && !showEditForm" />
+
+          <div class="button-group" *ngIf="!hasExistingProfile || showEditForm">
+            <button type="submit">{{ hasExistingProfile ? 'Save Changes' : 'Create Profile' }}</button>
+            <button type="button" *ngIf="hasExistingProfile" class="cancel-button" (click)="toggleEditForm()">Cancel</button>
+          </div>
+
+          <button
+            class="update-button"
+            type="button"
+            *ngIf="hasExistingProfile && !showEditForm"
+            (click)="toggleEditForm()"
+          >
+            Update Information
+          </button>
+        </form>
       </div>
+    </mat-tab>
 
-      <!-- Show edit button when viewing only -->
-      <button
-        class="update-button"
-        type="button"
-        *ngIf="hasExistingProfile && !showEditForm"
-        (click)="toggleEditForm()"
-      >
-        Update Information
-      </button>
-    </form>
-  </ng-container>
+    <!-- Password update tab -->
+    <mat-tab label="Password">
+      <div class="profile-section">
+        <h2 class="section-title">Update Password</h2>
+        <form class="profile-form" (ngSubmit)="changePassword()" #passwordForm="ngForm">
+          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+          <label>Current Password</label>
+          <input type="password" name="currentPassword" [(ngModel)]="updatedPassword.currentPassword" required />
+
+          <label>New Password</label>
+          <input type="password" name="newPassword" [(ngModel)]="updatedPassword.newPassword" required />
+
+          <button class="change-password" type="submit">Change Password</button>
+        </form>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>
-
-<div class="password-container">
-  <h2>Update Password</h2>
-  <form
-    class="profile-form"
-    (ngSubmit)="changePassword()"
-    #passwordForm="ngForm"
-  >
-  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-  
-    <input
-      type="password"
-      name="currentPassword"
-      [(ngModel)]="updatedPassword.currentPassword"
-      placeholder="Current Password"
-      required
-    />
-    <input
-      type="password"
-      name="newPassword"
-      [(ngModel)]="updatedPassword.newPassword"
-      placeholder="New Password"
-      required
-    />
-
-    <button
-      class="change-password"
-      type="submit"
-    >
-      Change Password
-    </button>
-  </form>
-</div>
-

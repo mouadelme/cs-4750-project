@@ -2,13 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../auth.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatTabsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+  ],  
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -23,7 +36,7 @@ export class ProfileComponent implements OnInit {
     height_in: null as number | null,
     username: ''
   };
-  
+
   hasExistingProfile = false;
   showEditForm = false;
   loading = true;
@@ -31,7 +44,6 @@ export class ProfileComponent implements OnInit {
   private _errorMessage: string | null = null;
   updatedPassword = { currentPassword: '', newPassword: '', username: ''};
   successMessage = '';
-
 
   get errorMessage(): string | null {
     return this._errorMessage;
@@ -77,11 +89,10 @@ export class ProfileComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        // Any error means we should show the form
         this.hasExistingProfile = false;
         this.showEditForm = true;
-        
-        if (err.status !== 404) { // 404 is expected if no profile
+
+        if (err.status !== 404) {
           console.error('Error fetching profile:', err);
           this.error = 'Failed to load profile data. Try again later.';
         }
@@ -142,25 +153,23 @@ export class ProfileComponent implements OnInit {
 
   changePassword() {
     const { currentPassword, newPassword, username } = this.updatedPassword;
-  
-    // Empty field check
+
     if (!currentPassword || !newPassword) {
       this.errorMessage = 'Please fill out all password fields.';
       return;
     }
-  
-    // Password validation
+
     const validationError = this.validatePassword(newPassword);
     if (validationError) {
       this.errorMessage = validationError;
       return;
     }
-  
+
     if (currentPassword === newPassword) {
       this.errorMessage = 'New password cannot be the same as the current password.';
       return;
     }
-  
+
     this.http.post('/api/new_password', this.updatedPassword, { withCredentials: true }).subscribe({
       next: () => {
         this.errorMessage = null;
@@ -175,6 +184,4 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
-  
-
 }
