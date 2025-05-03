@@ -53,6 +53,9 @@ export class DashboardComponent implements OnInit {
   };
 
   errorMessage: string | null = null;
+  logTab: 'exercise' | 'food' = 'exercise';
+  formTab: 'exercise' | 'food' = 'exercise';
+
   
 
   constructor(
