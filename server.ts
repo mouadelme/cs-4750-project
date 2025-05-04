@@ -63,7 +63,6 @@ passport.deserializeUser(async (id: number, done: (err: any, user?: any) => void
 
 export function app(): express.Express {
   const server = express();
-  server.use(bodyParser.json());
   server.use(cors({
     origin: 'http://localhost:4200',
     credentials: true
@@ -91,7 +90,7 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  server.use(express.json());
+  server.use('/api', express.json());
 
   server.get('/api/test-db', async (req, res) => {
     try {
